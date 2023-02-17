@@ -1,0 +1,23 @@
+Roles:
+
+    Team Leader/Manager/Professor Communicator:
+        Rithvik
+    Project Manager/Scrum Master:
+        Callie.
+    SWE:
+        Databases:
+            LITERALLY EVERYONE.
+        Backend/Middleware:
+            Theo,
+            Grant,
+
+        Frontend:
+            Rithvik.
+            Tomas.
+        Flex:
+            Everyone.
+    Technical Writer/Documentatorinator:
+        Clay.
+    Security Engineer:
+        None lmao.
+    
