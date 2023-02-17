@@ -1,4 +1,4 @@
 # Big-O-of-No
 
 
-![Petah](./peter_griffin_max.png)
+![Petah](./peter_griffin_mad_max.png)
