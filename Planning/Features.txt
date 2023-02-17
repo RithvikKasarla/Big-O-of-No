@@ -1,0 +1,135 @@
+User story schema;
+    {
+        User: "X"
+        Function: "Y"
+        Purpose: "Z"
+    }
+Features:
+    1. Upload and Access files.
+        {
+            User: "Student",
+            Function: "The ability to upload files",
+            Purpose: "to help fellow students learn and study"
+        },
+        {
+            User: "Student",
+            Function: "the ability to view the uploaded files",
+            Purpose: "help w/ my own studying"
+        },
+        {
+            User: "Student",
+            Function: "the ability to remove my personally uploaded files",
+            Purpose: "to maintain informational accuracy, and maintain personal privacy."
+        },
+        {
+            User: "Student",
+            Function: "the ability to iterate upon a personally uploaded file",
+            Purpose: "to update the file with improved accuracy and/or add additional inform. (contributes to collaborative tenets.)"
+        },
+
+    2. Give feedback and comment on files.
+        Add the ability to upvote and downvote files.
+        {
+            User: "Student",
+            Function: "The ability to upvote helpful files/posts",
+            Purpose: "so that other users can more easily see the usefullness of a file"
+        },
+        {
+            User: "Student",
+            Function: "The ability to downvote unhelpful files/posts",
+            Purpose: "So that other userse can more easily see the dis-usefullness of a file"
+        },
+        {
+            User: "Student",
+            Function: "The ability to sort files/posts",
+            Purpose: "so that I can easily see the best/worst files."
+        },
+        Add the ability to comment on files.
+        {
+            User: "Student",
+            Function: "The ability to comment on files",
+            Purpose: "to ask questions, explain why someone is stupid, and praise someone."
+        },
+        {
+            User: "Student",
+            Function: "reply to other comments",
+            Purpose: "to maintain a discussion and answer questions"
+        },
+        {
+            User: "Student",
+            Function: "The ability to upvote/downvote a comment",
+            Purpose: "to agree, emphasize, disagree de-emphasize"
+        },
+    3. Search for specific concepts in files.
+        {
+            User: "Student",
+            Function: "The ability to search for posts/files/comments based on key-words",
+            Purpose: "I want to find a post or comment that mentions <KEYWORD>."
+        },
+        {
+            User: "Student",
+            Function: "The ability to search for files based on file-type",
+            Purpose: "So that I can find a relevant file format for my needs. (mp4 for music people idk)"
+        },
+        {
+            User: "Student",
+            Function: "The ability to search for posts/files/comments based on users",
+            Purpose: "To find content from a user that I enjoy/agree with/etc."
+        },
+
+Platform/'non-features':
+    1. Login:
+        {
+            User: "Student",
+            Function: "I want to be able to login",
+            Purpose: "to access my account to maintain continuity."
+        },
+    1-b. Create my account:
+        {
+            User: "Student",
+            Function: "The ability to create an account",
+            Purpose: "to access <WEBAPP_NAME_HERE>"
+        },
+    2. Sign out:
+        {
+            User: "Student",
+            Function: "the ability to sign out",
+            Purpose: "to prevent other people from using the account."
+        },
+    2-b. Delete my account:
+        {
+            User: "Student",
+            Function: "to delete my account",
+            Purpose: "so that the feds can't get me."
+        },
+    3. Division of classes into 'channels'
+        {
+            User: "Student",
+            Function: "have my classes seperated into different channels",
+            Purpose: "to maintain UX organization and quickly find important notes."
+        },
+
+    4. Moderation:
+        {
+            User: "Student",
+            Function: "the ability to report a post",
+            Purpose: "to prevent malicious activities."
+        },
+        {
+            User: "Student",
+            Function: "the ability to ban a user if they are reported enough, by enough people.",
+            Purpose: "To prevent malicious actors."
+        },
+        {
+            User: "Student",
+            Function: "The ability for a banned user to have all their posts with ≤ 0 shwarma.",
+            Purpose: "To remove all the malicious activities from a user."
+        },
+
+
+
+
+
+
+
+
