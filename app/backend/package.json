@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prisma-introspect": "npx prisma db pull"
+    "prisma-pull": "npx prisma db pull",
+    "prisma-push": "npx prisma db push",
+    "prisma-generate": "npx prisma generate"
   },
   "author": "",
   "license": "ISC",
