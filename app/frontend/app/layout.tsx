@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import Header from "./Header";
+import Page from "./sidebar";
 
 export default function RootLayout({
   children,
@@ -11,7 +12,10 @@ export default function RootLayout({
       <head></head>
       <body>
         <Header />
-        {children}
+        <div className="flex h-screen">
+          <Page />
+          {children}
+        </div>
       </body>
     </html>
   );
