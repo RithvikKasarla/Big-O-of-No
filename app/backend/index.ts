@@ -12,7 +12,7 @@ const app = express();
 
 
 
-prismaClient.createUser("Jeff3","bezos7@aws.com");
+//prismaClient.createUser("Jeff3","bezos7@aws.com");
 //prismaClient.getUsers();
 
 app.use(cors());
