@@ -5,11 +5,15 @@ var cors = require("cors");
 
 require("dotenv/config");
 
-const databaseLayer = require("./databaseapi.js");
-
+const prismaClient = require("./PrismaClient.ts");
 const PORT = process.env.PORT || 3001;
 
 const app = express();
+
+
+
+prismaClient.createUser("Jeff2","bezos@aws.com");
+prismaClient.getUsers();
 
 app.use(cors());
 
@@ -24,11 +28,10 @@ app.get(
   asyncHandler(async (req, res) => {
     var url = req.params.url;
     var code = req.params.code;
-    var iflinkexists = await databaseLayer.ifExist(url);
-    var ifCodeExist = await databaseLayer.ifCodeExist(code);
-    res.json({
-      repeatLink: iflinkexists,
-      repeatCode: ifCodeExist,
-    });
+    
   })
 );
+//TO DO
+//CREATE EXPRESS INTERFACE
+//SHOULD INCLUDE POST -- NEW USER
+//SHOULD INCLUDE GET -- ALL USERSs
