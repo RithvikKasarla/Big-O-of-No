@@ -4,11 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prisma-pull": "npx prisma db pull",
+    "prisma-push": "npx prisma db push",
+    "prisma-generate": "npx prisma generate"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^4.11.0",
     "express": "^4.18.2"
   }
 }
