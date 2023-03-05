@@ -12,8 +12,8 @@ const app = express();
 
 
 
-prismaClient.createUser("Jeff2","bezos@aws.com");
-prismaClient.getUsers();
+prismaClient.createUser("Jeff3","bezos7@aws.com");
+//prismaClient.getUsers();
 
 app.use(cors());
 
@@ -23,15 +23,36 @@ app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
+//User related routes
+//Gets all users
 app.get(
-  "/deployFile/:fileName",
-  asyncHandler(async (req, res) => {
-    var url = req.params.url;
-    var code = req.params.code;
-    
-  })
+  '/api/users',
+  async (req,res) => {
+    let users = await prismaClient.getUsers()
+    if(users){
+      res.status(200).send(users)
+    }else{
+      res.status(400).send("Error getting users")
+    }
+  }
 );
+app.post(
+  '/api/users/',
+  async (req,res) => {
+    //const {name, email} = req.params;
+    //input validation.
+    const {name, email} = req.body;
+  }
+);
+//class related rout
+
+//file related routes
+
+//post related routes
+
+
 //TO DO
 //CREATE EXPRESS INTERFACE
 //SHOULD INCLUDE POST -- NEW USER
 //SHOULD INCLUDE GET -- ALL USERSs
+//CREATE DB ERROR HANDLING

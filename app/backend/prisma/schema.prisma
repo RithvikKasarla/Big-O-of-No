@@ -9,7 +9,18 @@ datasource db {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id      Int     @id @default(autoincrement())
+  email   String  @unique
+  name    String?
+  classId Int?
+  Class   Class?  @relation(fields: [classId], references: [id])
+
+  @@index([classId], map: "User_classId_fkey")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model Class {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
 }
