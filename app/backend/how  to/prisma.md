@@ -17,7 +17,8 @@ Then you can modify the schema.prisma file to:
 *     Add new tables.
 *     Remove Tables
 
-Then, to push the changes to the database, type;
+Then, to push the changes to the database, type; 
+NOTE: sometimes pushing doesn't work the first time. (I think this has to do with the DB 'waking up')
 >npx prisma db push
 
 or
