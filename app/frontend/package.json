@@ -6,6 +6,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@lyket/react": "^2.1.0",
+    "@supabase/supabase-js": "^2.10.0",
     "axios": "^1.3.4",
     "next": "latest",
     "react": "18.2.0",
