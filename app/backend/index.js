@@ -49,22 +49,44 @@ app.post(
       res.status(400).send("Error getting name or email")
       return
     }
+    //Try to create user
     try{
       let user = await prismaClient.createUser(name,email)
       if(user){
         res.status(200).send(user)
       }
+      //If user creation fails
     }catch(err){
       res.status(400).send("Error creating user")
       return
     }
-    //handle errors
-    
   }
 );
 //class related rout
 
 //file related routes
+//Should return the file.
+app/get(
+  '/api/files/:id',
+  (req,res) => {
+    res.status(500).send("Not implemented yet")
+  }
+)
+//Posting a file.
+//Should return the file id
+app.post(
+  '/api/files/',
+  (req,res) => {
+    res.status(500).send("Not implemented yet")
+  }
+)
+//Update/Replace/Iterate the file.
+app.patch(
+  '/api/files/:id',
+  (req,res) => {
+    res.status(500).send("Not implemented yet")
+  }
+)
 
 //post related routes
 

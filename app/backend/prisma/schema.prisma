@@ -10,9 +10,9 @@ datasource db {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model User {
   id      Int     @id @default(autoincrement())
-  email   String  @unique
-  name    String?
-  classes   Class[] //Many to many relationship with classes.
+  email   String  @unique //Unique email for the user. I.e. no two users can have the same email.
+  name    String //Name of the user. Required.
+  classes Class[] //Many to many relationship with classes.
   files   File[] //One to many relationship with files.
 }
 
@@ -39,7 +39,6 @@ model File {
   name      String //Name of the file.
   author    User    @relation(fields: [authorId], references: [id]) //Link to the user who uploaded the file.
   authorId  Int //Link to the user who uploaded the file.
-  //link to the s3 bucket.
-  path      String  @unique //Unique path to the file.
-
+  path      String  @unique //Unique path to the file (assumedly in a s3 bucket)
+  fileId    String  @unique //Unique id for the file. Used mostly for API lookup.
 }
