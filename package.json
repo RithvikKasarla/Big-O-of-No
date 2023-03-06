@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "express-async-handler": "^1.2.0"
-  },
-  "devDependencies": {
-    "@types/node": "^18.14.6"
-  }
-}
