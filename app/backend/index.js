@@ -1,6 +1,6 @@
 const express = require("express");
-const path = require("path");
-const asyncHandler = require("express-async-handler");
+//const path = require("path");
+//const asyncHandler = require("express-async-handler");
 var cors = require("cors");
 
 require("dotenv/config");
