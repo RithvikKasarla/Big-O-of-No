@@ -17,7 +17,7 @@ const app = express();
 
 app.use(cors());
 
-app.use(express.static(path.join(__dirname, "..", "client", "build")));
+app.use(express.json());
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
@@ -36,12 +36,30 @@ app.get(
     }
   }
 );
+//Create new user
 app.post(
   '/api/users/',
   async (req,res) => {
     //const {name, email} = req.params;
     //input validation.
-    const {name, email} = req.body;
+    try{
+      var name = req.body.name;
+      var email = req.body.email;
+    }catch(err){
+      res.status(400).send("Error getting name or email")
+      return
+    }
+    try{
+      let user = await prismaClient.createUser(name,email)
+      if(user){
+        res.status(200).send(user)
+      }
+    }catch(err){
+      res.status(400).send("Error creating user")
+      return
+    }
+    //handle errors
+    
   }
 );
 //class related rout
