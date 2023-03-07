@@ -66,7 +66,7 @@ app.post(
 
 //file related routes
 //Should return the file.
-app/get(
+app.get(
   '/api/files/:id',
   (req,res) => {
     res.status(500).send("Not implemented yet")
