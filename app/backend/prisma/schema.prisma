@@ -14,6 +14,7 @@ model User {
   name    String //Name of the user. Required.
   classes Class[] //Many to many relationship with classes.
   files   File[] //One to many relationship with files.
+  posts   Post[] //One to many relationship with posts.
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
@@ -27,6 +28,7 @@ model Class {
   id    Int    @id @default(autoincrement())
   name  String @unique //Unique name for the class.
   users User[] //Many to many relationship with users.
+  posts Post[] //One to many relationship with posts.
 }
 
 //File table
@@ -41,4 +43,22 @@ model File {
   authorId  Int //Link to the user who uploaded the file.
   path      String  @unique //Unique path to the file (assumedly in a s3 bucket)
   fileId    String  @unique //Unique id for the file. Used mostly for API lookup.
+  posts     Post[] //Many to many relationship with posts.
+}
+//Post Table.
+//Includes a required title.
+//Includes a required body.
+//Includes a required author.
+//Includes a required class.
+//Includes a required date.
+model Post {
+  id        Int     @id @default(autoincrement())
+  title     String //Title of the post.
+  body      String //Body of the post.
+  author    User    @relation(fields: [authorId], references: [id]) //Link to the user who created the post.
+  authorId  Int //Link to the user who created the post.
+  class     Class   @relation(fields: [classId], references: [id]) //Link to the class the post is in.
+  classId   Int //Link to the class the post is in.
+  date      DateTime //Date the post was created.
+  files     File[] //Many to many relationship with files.
 }
