@@ -1,6 +1,13 @@
 // Load the SDK for JavaScript
-const env = require("dotenv/config");
-
-var AWS = require('aws-sdk');
+import { S3Client, AbortMultipartUploadCommand } from "@aws-sdk/client-s3";
 // Set the Region 
-AWS.config.update({region: env('AWS_REGION')});
+module.exports.region = "us-east-1";
+
+// a client can be shared by different commands.
+const client = new S3Client({ region: "REGION" });
+
+const params = {
+  /** input parameters */
+  'Bucket': 'BUCKET',
+};
+const command = new AbortMultipartUploadCommand(params);

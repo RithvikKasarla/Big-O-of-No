@@ -19,7 +19,7 @@
     "express-async-handler": "^1.2.0"
   },
   "devDependencies": {
-    "@types/node": "^18.14.6",
-    "aws-sdk": "^2.1329.0"
+    "@aws-sdk/client-s3": "^3.282.0",
+    "@types/node": "^18.14.6"
   }
 }
