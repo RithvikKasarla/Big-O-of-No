@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
     "prisma-pull": "npx prisma db pull",
     "prisma-push": "npx prisma db push",
     "prisma-generate": "npx prisma generate"
@@ -13,6 +13,12 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^4.11.0",
-    "express": "^4.18.2"
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.14.6"
   }
 }
