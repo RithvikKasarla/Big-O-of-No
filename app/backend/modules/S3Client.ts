@@ -1,11 +1,16 @@
 
 // import individual service
 import S3 from 'aws-sdk/clients/s3';
-
+//for handling files?
 import fs from 'fs';
+//dotenv
 
-const ACCESS_KEY = 'AKIAWRNI6JLGZCMTAXEY';
-const SECRET_ACCESS_KEY = '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';
+require('dotenv').config();
+//confirm dotenv is working
+console.log(process.env);
+
+const ACCESS_KEY = process.env.ACCESS_KEY; //replace with dotenv
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY; //replace with dotenv
 const BUCKET_NAME = 'big-no-s3-dev';
 const REGION = "us-east-2";
 
