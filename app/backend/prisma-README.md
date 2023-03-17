@@ -7,4 +7,3 @@ npm run prisma-push
 
 
 to create/modify a table, look in the ./prisma/schema.prisma file. Using Prisma's syntax you can create SQL code in javascript format.
-
