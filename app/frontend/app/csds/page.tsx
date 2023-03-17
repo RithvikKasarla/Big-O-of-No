@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import FileCard from "./../fileCard";
+"use client";
+import React from "react";
+import FileCard from "../components/fileCard";
+import Comment from "../components/Comment";
 
-const CSDS = () => {
+const CSDS: React.FC = () => {
   return (
     <div className="flex ...">
       <div className="pl-5 pt-3">
@@ -13,6 +15,7 @@ const CSDS = () => {
           <FileCard />
         </div>
       </div>
+      <Comment />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import "../styles/globals.css";
-import Header from "./Header";
-import Page from "./sidebar";
+import Header from "./components/Header";
+import Page from "./components/sidebar";
 
 export default function RootLayout({
   children,
