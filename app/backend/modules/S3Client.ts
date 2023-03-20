@@ -3,6 +3,7 @@
 import S3 from 'aws-sdk/clients/s3';
 //for handling files?
 import fs from 'fs';
+import { Stream } from 'stream';
 //dotenv
 require('dotenv').config();
 //confirm dotenv is working
@@ -36,7 +37,7 @@ s3.createBucket(create_params, function (err, data) {
     }
 });
 */
-module.exports.createBucket = async function (bucketName) {
+module.exports.createBucket = async function (bucketName: string) {
     let createParams = {
         Bucket: bucketName,
         CreateBucketConfiguration: {
@@ -51,7 +52,7 @@ module.exports.createBucket = async function (bucketName) {
         }
     });
 };
-module.exports.uploadFile = async function (file, fileName,bucketName) {
+module.exports.uploadFile = async function (file:Stream, fileName: string, bucketName: string) {
   let uploadParams = {
     Bucket: bucketName,
     Key: fileName,

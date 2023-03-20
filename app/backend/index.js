@@ -6,6 +6,7 @@ var cors = require("cors");
 require("dotenv/config");
 
 const prismaClient = require("./modules/PrismaClient.ts");
+const S3Client = require("./modules/S3Client.ts");
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -74,9 +75,28 @@ app.get(
 )
 //Posting a file.
 //Should return the file id
+//Requires form-data
+
 app.post(
   '/api/files/',
   (req,res) => {
+    //Ensure content-type is form-data
+    if(req.headers['content-type'] != 'multipart/form-data'){
+      res.status(400).send("Content-type must be form-data")
+      return
+    }
+    //Ensure file is present
+    if(!req.file){
+      res.status(400).send("req.file not present")
+      return
+    }
+    //Ensure file is not empty
+    if(req.file.size == 0){
+      res.status(400).send("File is empty")
+      return
+    }
+    //save file to s3
+    S3Client.uploadFile(req.file)
     res.status(500).send("Not implemented yet")
   }
 )
