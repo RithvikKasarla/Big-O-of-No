@@ -4,7 +4,6 @@ import S3 from 'aws-sdk/clients/s3';
 //for handling files?
 import fs from 'fs';
 //dotenv
-
 require('dotenv').config();
 //confirm dotenv is working
 console.log(process.env);
