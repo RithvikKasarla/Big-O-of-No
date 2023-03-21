@@ -5,15 +5,14 @@ var cors = require("cors");
 
 require("dotenv/config");
 
-const prismaClient = require("./PrismaClient.ts");
+const prismaClient = require("./modules/PrismaClient.ts");
+const S3Client = require("./modules/S3Client.js");
 const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-
-
-//prismaClient.createUser("Jeff3","bezos7@aws.com");
-//prismaClient.getUsers();
+var fileupload = require("express-fileupload");
+app.use(fileupload());
 
 app.use(cors());
 
@@ -34,8 +33,7 @@ app.get(
     }else{
       res.status(400).send("Error getting users")
     }
-  }
-);
+  });  
 //Create new user
 app.post(
   '/api/users/',
@@ -66,28 +64,58 @@ app.post(
 
 //file related routes
 //Should return the file.
-app/get(
+app.get(
   '/api/files/:id',
-  (req,res) => {
+  async (req,res) => {
     res.status(500).send("Not implemented yet")
-  }
-)
+  });
+
 //Posting a file.
 //Should return the file id
+//Requires form-data
+
 app.post(
   '/api/files/',
-  (req,res) => {
-    res.status(500).send("Not implemented yet")
+  async (req,res) => {
+    //Ensure content-type has multipart/form-data in it
+    if(!req.headers['content-type'].includes('multipart/form-data')){
+      res.status(400).send("Content-type must be form-data, was " + req.headers['content-type'])
+      return
+    }
+    //Ensure file is present
+    if(!req.files){
+      res.status(400).send("req.file not present")
+      return
+    }
+    console.log("Length " + req.files.length)
+    console.log("File " + req.files.FormFieldName)
+    //Ensure file is not empty
+    if(req.files.length == 0){
+      res.status(400).send("File is empty")
+      return
+    }
+    console.log(req.files)
+    //assign as variables.
+    let file = req.files['file']
+    if(file == undefined){
+      res.status(400).send("File is undefined")
+      return
+    }
+    //save file to s3
+    let uploadRes = await S3Client.uploadFile(file.data, "Testing_PNG_0.png")
+    if(uploadRes == -1){
+      res.status(400).send("Error uploading file")
+    }else{
+      res.status(200).send(uploadRes)
+    }
   }
-)
+);
 //Update/Replace/Iterate the file.
 app.patch(
   '/api/files/:id',
-  (req,res) => {
+  async (req,res) => {
     res.status(500).send("Not implemented yet")
-  }
-)
-
+  });
 //post related routes
 
 
