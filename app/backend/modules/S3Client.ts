@@ -1,9 +1,19 @@
 
 // import individual service
-import S3 from 'aws-sdk/clients/s3';
+const {
+    S3Client,
+    CreateBucketCommand,
+    PutObjectCommand,
+    ListObjectsCommand,
+    CopyObjectCommand,
+    GetObjectCommand,
+    DeleteObjectsCommand,
+    DeleteBucketCommand,
+  } = require ("@aws-sdk/client-s3");
 //for handling files?
-import fs from 'fs';
-import { Stream } from 'stream';
+const fs = require('fs');
+//for handling streams?
+const Stream = require('stream');
 //dotenv
 require('dotenv').config();
 //confirm dotenv is working
@@ -15,9 +25,8 @@ const BUCKET_NAME = 'big-no-s3-dev';
 const REGION = "us-east-2";
 
 
-const s3 = new S3({
-    accessKeyId: ACCESS_KEY,
-    secretAccessKey: SECRET_ACCESS_KEY,
+const client = new S3Client({
+    region: REGION,
 });
 
 /*
@@ -37,32 +46,29 @@ s3.createBucket(create_params, function (err, data) {
     }
 });
 */
-module.exports.createBucket = async function (bucketName: string) {
+module.exports.createBucket = async function (bucketName) {
     let createParams = {
         Bucket: bucketName,
         CreateBucketConfiguration: {
             LocationConstraint: REGION
         }
     };
-    s3.createBucket(createParams, function (err, data) {
-        if (err) {
-            console.log(err, err.stack);
-        } else {
-            console.log('Bucket Created Successfully', data.Location);
-        }
-    });
+    let createRes = await client.send(
+        new CreateBucketCommand(
+            createParams
+        )
+    )
 };
-module.exports.uploadFile = async function (file:Stream, fileName: string, bucketName: string) {
-  let uploadParams = {
-    Bucket: bucketName,
-    Key: fileName,
-    Body: file,
-  };
-  s3.upload(uploadParams, function (err, data) {
-    if (err) {
-      console.log("Error", err);
-    } if (data) {
-      console.log("Upload Success", data.Location);
-    }
-  });
+module.exports.uploadFile = async function (file, fileName) {
+    let uploadParams = {
+        Bucket: BUCKET_NAME,
+        Key: fileName,
+        Body: file,
+    };
+    console.log(uploadParams)
+    let uploadRes = await client.send(
+        new PutObjectCommand(
+            uploadParams
+        )
+    )
 };
