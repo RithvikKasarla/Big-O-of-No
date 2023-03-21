@@ -42,7 +42,6 @@ model File {
   author    User    @relation(fields: [authorId], references: [id]) //Link to the user who uploaded the file.
   authorId  Int //Link to the user who uploaded the file.
   path      String  @unique //Unique path to the file (assumedly in a s3 bucket)
-  fileId    String  @unique //Unique id for the file. Used mostly for API lookup.
   posts     Post[] //Many to many relationship with posts.
 }
 //Post Table.

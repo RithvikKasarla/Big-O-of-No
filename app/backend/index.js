@@ -34,6 +34,7 @@ app.get(
       res.status(400).send("Error getting users")
     }
   });  
+
 //Create new user
 app.post(
   '/api/users/',
@@ -94,20 +95,40 @@ app.post(
       res.status(400).send("File is empty")
       return
     }
-    console.log(req.files)
-    //assign as variables.
-    let file = req.files['file']
-    if(file == undefined){
+    //Ensure file is not undefined
+    if(req.files['file'] == undefined){
       res.status(400).send("File is undefined")
       return
     }
-    //save file to s3
-    let uploadRes = await S3Client.uploadFile(file.data, "Testing_PNG_0.png")
-    if(uploadRes == -1){
+
+    //Get the file
+    let file = req.files['file']
+    //Create new File Instance in DB.
+    /*
+    let fileInstance = await prismaClient.createFile(
+      file_name = file.name,
+      author_id = 1, //**TODO: THIS SHOULD BE THE USER ID
+      pat
+    )*/
+    //Get the id from the file instance.
+    //Upload the file to S3 with the id as the name.
+    //Assign the File's 'path' to the S3 path.
+    
+    let uploadURL = await S3Client.uploadFile(file.data, "Testing_PNG_2.png")
+    //if this fails, send 400 error.
+    if(!uploadURL){
       res.status(400).send("Error uploading file")
-    }else{
-      res.status(200).send(uploadRes)
+      return null
     }
+    let fileInstance = await prismaClient.createFile(
+      file_name = file.name,
+      author_id = 1, //**TODO: THIS SHOULD BE THE USER ID
+      path = uploadURL,
+    )
+    //if this fails, delete the file from S3.
+
+    //Handle failed upload.
+    
   }
 );
 //Update/Replace/Iterate the file.

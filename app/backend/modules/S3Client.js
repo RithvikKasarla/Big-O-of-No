@@ -48,13 +48,21 @@ module.exports.createBucket = async function (bucketName) {
     };
     let createRes = await client.createBucket(createParams)
 };
+//Should not be called by the api..
 module.exports.uploadFile = async function (file, fileName) {
     let uploadParams = {
         Bucket: BUCKET_NAME,
-        Key: fileName,
+        Key: fileName, //Generate a unique name for the file
         Body: file,
         ACL: 'public-read' //public read access so that anyone can access the file
     };
-    console.log(uploadParams)
+    console.log("Upload Params: " + uploadParams)
     let uploadRes = await client.putObject(uploadParams)
+    //if upload is successful, return the link to the file.
+    if(uploadRes.$metadata.httpStatusCode == 200){
+        return "https://big-no-s3-dev.s3.us-east-2.amazonaws.com/" + fileName;
+    }else{
+        return null;
+    }
 };
+//Get link to file.
