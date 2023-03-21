@@ -17,10 +17,11 @@ const REGION = "us-east-2";
 
 const client = new S3({
     region: REGION,
-    endpoint: process.env.S3_ENDPOINT,
-    
+    credentials: {
+        accessKeyId: ACCESS_KEY,
+        secretAccessKey: SECRET_ACCESS_KEY
+    }
 });
-
 /*
 const create_params = {
     Bucket: BUCKET_NAME,
@@ -52,6 +53,7 @@ module.exports.uploadFile = async function (file, fileName) {
         Bucket: BUCKET_NAME,
         Key: fileName,
         Body: file,
+        ACL: 'public-read' //public read access so that anyone can access the file
     };
     console.log(uploadParams)
     let uploadRes = await client.putObject(uploadParams)
