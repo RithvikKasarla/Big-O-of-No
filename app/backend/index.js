@@ -6,7 +6,7 @@ var cors = require("cors");
 require("dotenv/config");
 
 const prismaClient = require("./modules/PrismaClient.ts");
-const S3Client = require("./modules/S3Client.ts");
+const S3Client = require("./modules/S3Client.js");
 const PORT = process.env.PORT || 3001;
 
 const app = express();

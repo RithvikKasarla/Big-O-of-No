@@ -1,32 +1,24 @@
-
-// import individual service
-const {
-    S3Client,
-    CreateBucketCommand,
-    PutObjectCommand,
-    ListObjectsCommand,
-    CopyObjectCommand,
-    GetObjectCommand,
-    DeleteObjectsCommand,
-    DeleteBucketCommand,
-  } = require ("@aws-sdk/client-s3");
+const { S3 } = require('@aws-sdk/client-s3');
 //for handling files?
 const fs = require('fs');
 //for handling streams?
 const Stream = require('stream');
 //dotenv
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config({ path: __dirname+'/../.env' });
 //confirm dotenv is working
 console.log(process.env);
 
-const ACCESS_KEY = process.env.ACCESS_KEY; //replace with dotenv
-const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY; //replace with dotenv
+const ACCESS_KEY = process.env['ACCESS_KEY']; 
+const SECRET_ACCESS_KEY = process.env['SECRET_ACCESS_KEY'];
 const BUCKET_NAME = 'big-no-s3-dev';
 const REGION = "us-east-2";
 
 
-const client = new S3Client({
+const client = new S3({
     region: REGION,
+    endpoint: process.env.S3_ENDPOINT,
+    
 });
 
 /*
@@ -53,11 +45,7 @@ module.exports.createBucket = async function (bucketName) {
             LocationConstraint: REGION
         }
     };
-    let createRes = await client.send(
-        new CreateBucketCommand(
-            createParams
-        )
-    )
+    let createRes = await client.createBucket(createParams)
 };
 module.exports.uploadFile = async function (file, fileName) {
     let uploadParams = {
@@ -66,9 +54,5 @@ module.exports.uploadFile = async function (file, fileName) {
         Body: file,
     };
     console.log(uploadParams)
-    let uploadRes = await client.send(
-        new PutObjectCommand(
-            uploadParams
-        )
-    )
+    let uploadRes = await client.putObject(uploadParams)
 };
