@@ -32,14 +32,18 @@ const CommentForm: React.FC<CommentFormProps> = ({ onCommentSubmit }) => {
   };
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       {showDefaultComment && (
-        <div className="bg-gray-200 my-3 rounded p-2 m-2">
-          <p>
-            It sure is quiet in here... Ask a question to get the conversation
-            started!
-          </p>
-          <p className="text-xs text-stone-500">-Big O(No) team</p>
+        <div className="bg-gray-200 my-3 rounded p-2 m-2 flex flex-col w-full space-y-1">
+          <div>
+            <p>
+              It sure is quiet in here... Ask a question to get the conversation
+              started!
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-stone-500">-Big O(No) team</p>
+          </div>
         </div>
       )}
       <label htmlFor="comment" className="">
@@ -55,9 +59,7 @@ const CommentForm: React.FC<CommentFormProps> = ({ onCommentSubmit }) => {
           required
         />
       </div>
-      <button type="submit" onClick={handleSubmit}>
-        Submit
-      </button>
+      <button type="submit">Submit</button>
     </form>
   );
 };

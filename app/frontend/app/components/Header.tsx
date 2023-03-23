@@ -12,10 +12,10 @@ function Header() {
         Home
       </Link>
       <Link
-        href="/upload"
+        href="/discussion"
         className="m-1 px-2 py-1 bg-white text-blue-500 rounded-lg"
       >
-        Upload File
+        Discussion Board
       </Link>
     </header>
   );

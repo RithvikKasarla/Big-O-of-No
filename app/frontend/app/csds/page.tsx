@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import FileCard from "../components/fileCard";
+import Upload from "../components/upload";
 import Comment from "../components/Comment";
 
 const CSDS: React.FC = () => {
@@ -15,7 +16,8 @@ const CSDS: React.FC = () => {
           <FileCard />
         </div>
       </div>
-      <Comment />
+      <Upload />
+      <div></div>
     </div>
   );
 };
