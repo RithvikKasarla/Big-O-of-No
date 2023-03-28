@@ -1,4 +1,5 @@
 const { S3 } = require('@aws-sdk/client-s3');
+const { Upload } = require('@aws-sdk/lib-storage');
 //for handling files?
 const fs = require('fs');
 //for handling streams?
@@ -22,6 +23,10 @@ const client = new S3({
         secretAccessKey: SECRET_ACCESS_KEY
     }
 });
+
+
+
+
 /*
 const create_params = {
     Bucket: BUCKET_NAME,
@@ -49,6 +54,7 @@ module.exports.createBucket = async function (bucketName) {
     let createRes = await client.createBucket(createParams)
 };
 //Should not be called by the api..
+//Eventually deprecated.
 module.exports.uploadFile = async function (file, fileName) {
     let uploadParams = {
         Bucket: BUCKET_NAME,
@@ -66,35 +72,44 @@ module.exports.uploadFile = async function (file, fileName) {
     }
 };
 
+//Upload file using S3 Multipart Upload.
 module.exports.multipartUpload = async function (filePath, fileName) {
-    //Initiate the multipart upload
-    let initParams = {
+    //Use https://stackoverflow.com/questions/66656565/aws-sdk-multipart-upload-to-s3-with-node-js
+    //let reader = new FileReader()
+    let file = ''
+    fs.readFile(filePath, (err, data) => {
+        console.log("reading file from path: " + filePath);
+        if (err) throw err;
+        console.log(data);
+        file = data;
+    });
+    if(file == ''){
+        console.log("File is empty");
+    }   
+    let uploadParams = {
         Bucket: BUCKET_NAME,
         Key: fileName, //Generate a unique name for the file
+        Body: file, //File @ filepath <ERROR
         ACL: 'public-read' //public read access so that anyone can access the file
-    };
-    let initRes = await client.createMultipartUpload(initParams, function (err, data) {
-        if(err){
-            console.log(err); //Failure
-        }else{
-            console.log(data); //Success
-        }
-        /*
-        data = {
-        Bucket: "examplebucket", 
-        Key: "largeobject", 
-        UploadId: "ibZBv_75gd9r8lH_gqXatLdxMVpAlj6ZQjEs.OwyF3953YdwbcQnMA2BLGn8Lx12fQNICtMw5KyteFeHw.Sjng--"
-        }
-        */
-    });
-    //Upload part(s)
-
-    //Complete the multipart upload
-    let completeParams = {
-
     }
-    let completeRes = await client.completeMultipartUpload(completeParams, function (err, data) {
-    });
+    try {
+        const parallelUploads3 = new Upload({
+            client: new S3({}) || new S3Client({}),
+            tags: [], // optional
+            queueSize: 4, // optional concurrency configuration
+            partSize: 1024 * 1024 * 5, // optional size of each part
+            leavePartsOnError: false, // optional manually handle dropped parts
+            params: uploadParams,
+        });
+        
+        parallelUploads3.on("httpUploadProgress", (progress) => {
+            console.log(progress);
+        });
+        
+        await parallelUploads3.done();
+    } catch (e) {
+        console.log(e);
+    }
 }
 //Get link to file.
 
