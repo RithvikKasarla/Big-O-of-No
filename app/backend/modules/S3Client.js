@@ -65,4 +65,36 @@ module.exports.uploadFile = async function (file, fileName) {
         return null;
     }
 };
+
+module.exports.multipartUpload = async function (filePath, fileName) {
+    //Initiate the multipart upload
+    let initParams = {
+        Bucket: BUCKET_NAME,
+        Key: fileName, //Generate a unique name for the file
+        ACL: 'public-read' //public read access so that anyone can access the file
+    };
+    let initRes = await client.createMultipartUpload(initParams, function (err, data) {
+        if(err){
+            console.log(err); //Failure
+        }else{
+            console.log(data); //Success
+        }
+        /*
+        data = {
+        Bucket: "examplebucket", 
+        Key: "largeobject", 
+        UploadId: "ibZBv_75gd9r8lH_gqXatLdxMVpAlj6ZQjEs.OwyF3953YdwbcQnMA2BLGn8Lx12fQNICtMw5KyteFeHw.Sjng--"
+        }
+        */
+    });
+    //Upload part(s)
+
+    //Complete the multipart upload
+    let completeParams = {
+
+    }
+    let completeRes = await client.completeMultipartUpload(completeParams, function (err, data) {
+    });
+}
 //Get link to file.
+

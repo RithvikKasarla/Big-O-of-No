@@ -111,6 +111,7 @@ app.post(
     }
 
     //Saves file to temporary Local storage.
+    //Returns a success status if the file is successfully saved.
     const file = req.files['file'];
     const path = download_path + file.name;
 
@@ -121,10 +122,11 @@ app.post(
       }
       res.status(200).send("File saved")
     });
-    
-    //Returns a success status if the file is successfully saved.
     //Then begins uploading to S3 using multipart upload.
-    //Upon S3 Completion, deletes the file from local storage & updates the DB.
+    
+    //Upon S3 Completion:
+    //deletes the file from local storage
+    //updates the DB.
     //Then sends a new message to user.
   });
 //Update/Replace/Iterate the file.
