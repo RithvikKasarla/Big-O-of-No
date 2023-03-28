@@ -73,7 +73,7 @@ app.get("/api/getAllfiles/:class", async (req, res) => {
     // Return a static list of files
     // Can have this stored per className in a database outside of S3
     const classNameFiles = {
-      Math: [
+      math: [
         { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
         { name: "TEST", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
         { name: "TEST2", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
@@ -83,15 +83,24 @@ app.get("/api/getAllfiles/:class", async (req, res) => {
         { name: "TEST6", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
         { name: "TEST7", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
       ],
-      CSDS: [
+      csds: [
         { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
         { name: "TEST", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
         { name: "TEST2", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
+      ],
+      phys: [
+        { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
       ],
     };
     console.log("Class name: " + className);
     console.log(classNameFiles[className]);
     // Return the filtered list of files as JSON
+    if (!classNameFiles[className]) {
+      res.json([
+        { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
+      ]);
+      return;
+    }
     res.json(classNameFiles[className]);
   } catch (error) {
     console.log(error);

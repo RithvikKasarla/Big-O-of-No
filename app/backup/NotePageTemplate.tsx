@@ -29,8 +29,7 @@ const NotePageTemplate = ({ name, key }: Props) => {
   const getListOfFiles = () => {
     //Fetch the data from the backends
     const curLoc = window.location.pathname;
-    console.log(curLoc);
-    fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`)
+    fetch(`http://localhost:3001/api/getAllFiles/${curLoc.slice(1)}`)
       .then((res) => res.json())
       .then((data) => {
         setFiles(data);
