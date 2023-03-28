@@ -14,7 +14,12 @@ interface File {
   dislikes: number;
 }
 
-const CSDS = () => {
+interface Props {
+  name: string;
+  key: string;
+}
+
+const NotePageTemplate = ({ name, key }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   // Fetch the data from the backend
   useEffect(() => {
@@ -24,8 +29,8 @@ const CSDS = () => {
   const getListOfFiles = () => {
     //Fetch the data from the backends
     const curLoc = window.location.pathname;
-    curLoc;
-    fetch(`http://localhost:3001/api/getAllFiles/CSDS`)
+    console.log(curLoc);
+    fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`)
       .then((res) => res.json())
       .then((data) => {
         setFiles(data);
@@ -35,7 +40,7 @@ const CSDS = () => {
   return (
     <div className="flex ...">
       <div className="pl-5 pt-3">
-        <p className="font-bold text-2xl">CSDS Main Page</p>
+        <p className="font-bold text-2xl">{name} Main Page</p>
         <hr className="mt-3 w-48 h-1 bg-gray-300 border-0 dark:bg-gray-600 rounded"></hr>
         <div className="pl-5 pt-3">
           <p>Testing 123</p>
@@ -59,4 +64,4 @@ const CSDS = () => {
   );
 };
 
-export default CSDS;
+export default NotePageTemplate;
