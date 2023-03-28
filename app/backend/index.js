@@ -73,9 +73,10 @@ app.get("/api/getAllfiles/:class", async (req, res) => {
     // Return a static list of files
     // Can have this stored per className in a database outside of S3
     const classNameFiles = {
+      //TODO: Get this from the database
       math: [
         { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
-        { name: "TEST", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
+        { name: "TEST0", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
         { name: "TEST2", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
         { name: "TEST3", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
         { name: "TEST4", author: "TEST1", url: "TEST2", likes: 0, dislike: 0 },
