@@ -20,9 +20,11 @@ const Page = () => {
               MATH
             </li>
           </Link>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            PHYS
-          </li>
+          <Link href="/phys">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              PHYS
+            </li>
+          </Link>
           <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
             ENGL
           </li>

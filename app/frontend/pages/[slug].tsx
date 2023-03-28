@@ -1,60 +1,89 @@
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import FileCard from "../app/components/fileCard";
 import Upload from "../app/components/upload";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import Header from "../app/components/Header";
+import Page from "../app/components/sidebar";
+interface File {
+  name: string;
+  author: string;
+  url: string;
+  likes: number;
+  dislikes: number;
+}
 
-interface Post {
-  title: string;
-  content: string;
+interface Props {
+  name: string;
   files: File[];
 }
 
-interface PostPageProps {
-  post: Post;
-}
-
-const PostPage: React.FC<PostPageProps> = ({ post }) => {
+const ClassPageTemplate = ({ name, files }: Props) => {
   const router = useRouter();
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
+  const [fileList, setFileList] = useState<File[]>([]);
+
+  useEffect(() => {
+    setFileList(files);
+  }, []);
+
+  const getListOfFiles = async () => {
+    const curLoc = router.query.slug ? router.query.slug[0] : "";
+    const res = await fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`);
+    const data = await res.json();
+    setFileList(data);
+  };
 
   return (
-    <div className="flex ...">
-      <div className="pl-5 pt-3">
-        <p className="font-bold text-2xl">{post.title}</p>
-        <hr className="mt-3 w-48 h-1 bg-gray-300 border-0 dark:bg-gray-600 rounded"></hr>
-        <div className="pl-5 pt-3">
-          <p>{post.content}</p>
-          <FileCard files={post.files} />
+    <>
+      <Header />
+      <div>
+        <div className="flex h-screen">
+          <Page />
+          <div className="flex ...">
+            <span className="pl-5 pt-3">
+              <p className="font-bold text-2xl">{name} Main Page</p>
+              <hr className="mt-3 w-48 h-1 bg-gray-300 border-0 dark:bg-gray-600 rounded"></hr>
+              <div className="pl-5 pt-3">
+                <p>Testing 123</p>
+                <p>Lorem ipsum dolor sit amet</p>
+                <div className="grid grid-cols-4 gap-5">
+                  {fileList.map((file, index) => (
+                    <FileCard
+                      key={`${file.url}_${index}`}
+                      FileName={file.name}
+                      Author={file.author}
+                      Url={file.url}
+                      likes={file.likes}
+                      dislikes={file.dislikes}
+                      ListOfFiles={getListOfFiles}
+                    />
+                  ))}
+                </div>
+              </div>
+            </span>
+            <Upload />
+          </div>
         </div>
       </div>
-      <Upload />
-    </div>
+    </>
   );
 };
 
-export default PostPage;
+export default ClassPageTemplate;
 
-export async function getStaticPaths() {
-  try {
-    // Fetch a list of all blog post slugs
-    const res = await fetch("http://localhost:3000/api/posts");
-    const posts = await res.json();
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const { slug } = context.query;
+  const name = slug.toUpperCase();
+  const key = slug;
+  const res = await fetch(`http://localhost:3001/api/getAllFiles/${key}`);
+  const files = await res.json();
 
-    // Map the slugs to an array of objects with params key
-    const paths = posts.map((post) => ({ params: { slug: post.slug } }));
-
-    return { paths, fallback: false };
-  } catch (error) {
-    console.log(error);
-    return { paths: [], fallback: false };
-  }
-}
-
-export async function getStaticProps({ params }) {
-  // Fetch the post data based on the slug in the URL
-  const res = await fetch(`http://localhost:3000/${params.slug}`);
-  const post = await res.json();
-
-  return { props: { post } };
-}
+  return {
+    props: {
+      name,
+      files,
+    },
+  };
+};
