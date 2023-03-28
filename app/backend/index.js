@@ -22,6 +22,8 @@ app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
+download_path = __dirname + "/TempFiles/";
+
 //User related routes
 //Gets all users
 app.get(
@@ -60,7 +62,7 @@ app.post(
       return
     }
   }
-);
+  );
 //class related rout
 
 //file related routes
@@ -71,38 +73,60 @@ app.get(
     res.status(500).send("Not implemented yet")
   });
 
-//Posting a file.
-//Should return the file id
-//Requires form-data
 
+
+
+//Post a file.
+//Validate files.
+//Saves file to temporary Local storage.
+//Returns a success status.
+//Then begins uploading to S3 using multipart upload.
+//Upon S3 Completion, deletes the file from local storage & updates the DB.
+//Then sends a new message to user.
 app.post(
   '/api/files/',
   async (req,res) => {
-    //Ensure content-type has multipart/form-data in it
+    //Validate files.
+    //  Ensure content-type has multipart/form-data in it
     if(!req.headers['content-type'].includes('multipart/form-data')){
       res.status(400).send("Content-type must be form-data, was " + req.headers['content-type'])
       return
     }
-    //Ensure file is present
+    //  Ensure file is present
     if(!req.files){
       res.status(400).send("req.file not present")
       return
     }
     console.log("Length " + req.files.length)
     console.log("File " + req.files.FormFieldName)
-    //Ensure file is not empty
+    //  Ensure file is not empty
     if(req.files.length == 0){
       res.status(400).send("File is empty")
       return
     }
-    //Ensure file is not undefined
+    //  Ensure file is not undefined
     if(req.files['file'] == undefined){
       res.status(400).send("File is undefined")
       return
     }
+
+    //Saves file to temporary Local storage.
+    const file = req.files['file'];
+    const path = download_path + file.name;
+
+    file.mv(path, (err) => {
+      if(err){
+        res.status(400).send("Error saving file")
+        return
+      }
+      res.status(200).send("File saved")
+    });
     
-  }
-);
+    //Returns a success status if the file is successfully saved.
+    //Then begins uploading to S3 using multipart upload.
+    //Upon S3 Completion, deletes the file from local storage & updates the DB.
+    //Then sends a new message to user.
+  });
 //Update/Replace/Iterate the file.
 app.patch(
   '/api/files/:id',
