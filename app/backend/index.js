@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 var fileupload = require("express-fileupload");
+const { fstat, unlinkSync } = require("fs");
 app.use(fileupload());
 
 app.use(cors());
@@ -120,13 +121,19 @@ app.post(
         res.status(400).send("Error saving file")
         return
       }
-      res.status(200).send("File saved")
       console.log ("File saved to " + path);
+      //Then begins uploading to S3 using multipart upload.
+      console.log("Uploading to S3")
       let uploadRes = await S3Client.multipartUpload(path,file.name);
+      //Upon S3 Completion:
+      console.log("Upload Res: " + uploadRes);
+      //deletes the file from local storage
+      unlinkSync(path);
+      //updates the DB.
+      let dbRes = await prismaClient.createFile(file.name,"AUTHOR_ID","S3_URL","POST_ID");
+      //Then sends a new message to user.
     });
-    //let uploadRes = await S3Client.multipartUpload(file,file.name);
-    //Then begins uploading to S3 using multipart upload.
-    //Upon S3 Completion:
+    
     //console.log("Upload Res: " + uploadRes);
     //deletes the file from local storage
     //updates the DB.
