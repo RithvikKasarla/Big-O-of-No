@@ -1,4 +1,4 @@
-const { S3 } = require('@aws-sdk/client-s3');
+const { S3, S3Client } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 //for handling files?
 const fs = require('fs');
@@ -15,6 +15,8 @@ const SECRET_ACCESS_KEY = process.env['SECRET_ACCESS_KEY'];
 const BUCKET_NAME = 'big-no-s3-dev';
 const REGION = "us-east-2";
 
+const { createReadStream } = require('fs');
+
 
 const client = new S3({
     region: REGION,
@@ -23,9 +25,6 @@ const client = new S3({
         secretAccessKey: SECRET_ACCESS_KEY
     }
 });
-
-
-
 
 /*
 const create_params = {
@@ -74,32 +73,25 @@ module.exports.uploadFile = async function (file, fileName) {
 
 //Upload file using S3 Multipart Upload.
 module.exports.multipartUpload = async function (filePath, fileName) {
-    //Use https://stackoverflow.com/questions/66656565/aws-sdk-multipart-upload-to-s3-with-node-js
-    //let reader = new FileReader()
-    let file = ''
-    fs.readFile(filePath, (err, data) => {
-        console.log("reading file from path: " + filePath);
-        if (err) throw err;
-        console.log(data);
-        file = data;
-    });
-    if(file == ''){
-        console.log("File is empty");
-    }   
-    let uploadParams = {
+    const target = { 
         Bucket: BUCKET_NAME,
-        Key: fileName, //Generate a unique name for the file
-        Body: file, //File @ filepath <ERROR
+        Key: fileName, 
+        Body: createReadStream(__dirname + '/../TempFiles/JPG_TEST_0.jpg'),
         ACL: 'public-read' //public read access so that anyone can access the file
-    }
+    };
     try {
         const parallelUploads3 = new Upload({
-            client: new S3({}) || new S3Client({}),
-            tags: [], // optional
+            client: new S3Client({
+                region: REGION,
+                credentials: {
+                    accessKeyId: ACCESS_KEY,
+                    secretAccessKey: SECRET_ACCESS_KEY
+                }
+            }),
             queueSize: 4, // optional concurrency configuration
-            partSize: 1024 * 1024 * 5, // optional size of each part
+            partSize: 5242880, // optional size of each part
             leavePartsOnError: false, // optional manually handle dropped parts
-            params: uploadParams,
+            params: target,
         });
         
         parallelUploads3.on("httpUploadProgress", (progress) => {
@@ -107,6 +99,7 @@ module.exports.multipartUpload = async function (filePath, fileName) {
         });
         
         await parallelUploads3.done();
+        console.log("Upload Complete");
     } catch (e) {
         console.log(e);
     }
