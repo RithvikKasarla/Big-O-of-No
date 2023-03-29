@@ -113,8 +113,8 @@ app.post(
     //Saves file to temporary Local storage.
     //Returns a success status if the file is successfully saved.
     const file = req.files['file'];
-    //const path = download_path + file.name;
-    /*
+    const path = download_path + file.name;
+    
     file.mv(path, async (err) => {
       if(err){
         res.status(400).send("Error saving file")
@@ -122,9 +122,9 @@ app.post(
       }
       res.status(200).send("File saved")
       console.log ("File saved to " + path);
-      let uploadRes = await S3Client.multipartUpload(file,file.name);
-    });*/
-    let uploadRes = await S3Client.multipartUpload(file,file.name);
+      let uploadRes = await S3Client.multipartUpload(path,file.name);
+    });
+    //let uploadRes = await S3Client.multipartUpload(file,file.name);
     //Then begins uploading to S3 using multipart upload.
     //Upon S3 Completion:
     //console.log("Upload Res: " + uploadRes);

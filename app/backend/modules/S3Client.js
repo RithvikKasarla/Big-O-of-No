@@ -76,7 +76,7 @@ module.exports.multipartUpload = async function (filePath, fileName) {
     const target = { 
         Bucket: BUCKET_NAME,
         Key: fileName, 
-        Body: createReadStream(__dirname + '/../TempFiles/JPG_TEST_0.jpg'),
+        Body: createReadStream(filePath),
         ACL: 'public-read' //public read access so that anyone can access the file
     };
     try {
