@@ -130,6 +130,8 @@ app.post(
       //deletes the file from local storage
       unlinkSync(path);
       //updates the DB.
+      //TODO: Requires DB be set up with valid data.
+      //TODO; start requiring User Auth.
       let dbRes = await prismaClient.createFile(file.name,"AUTHOR_ID","S3_URL","POST_ID");
       //Then sends a new message to user.
     });
