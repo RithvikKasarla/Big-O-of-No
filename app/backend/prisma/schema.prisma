@@ -14,6 +14,12 @@ model User {
   email    String  @unique
   user_password String
 }
+//
+model AccessToken {
+  id           Int     @id @default(autoincrement())
+  access_token String
+  user_id      Int
+}
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model Class {
