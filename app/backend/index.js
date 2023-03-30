@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 var fileupload = require("express-fileupload");
+const { fstat, unlinkSync } = require("fs");
 app.use(fileupload());
 
 app.use(cors());
@@ -21,6 +22,8 @@ app.use(express.json());
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+
+download_path = __dirname + "/TempFiles/";
 
 //User related routes
 //Gets all users
@@ -34,6 +37,7 @@ app.get(
       res.status(400).send("Error getting users")
     }
   });  
+
 //Create new user
 app.post(
   '/api/users/',
@@ -59,7 +63,7 @@ app.post(
       return
     }
   }
-);
+  );
 //class related rout
 
 //file related routes
@@ -70,46 +74,75 @@ app.get(
     res.status(500).send("Not implemented yet")
   });
 
-//Posting a file.
-//Should return the file id
-//Requires form-data
 
+
+
+//Post a file.
+//Validate files.
+//Saves file to temporary Local storage.
+//Returns a success status.
+//Then begins uploading to S3 using multipart upload.
+//Upon S3 Completion, deletes the file from local storage & updates the DB.
+//Then sends a new message to user.
 app.post(
   '/api/files/',
   async (req,res) => {
-    //Ensure content-type has multipart/form-data in it
+    //Validate files.
+    //  Ensure content-type has multipart/form-data in it
     if(!req.headers['content-type'].includes('multipart/form-data')){
       res.status(400).send("Content-type must be form-data, was " + req.headers['content-type'])
       return
     }
-    //Ensure file is present
+    //  Ensure file is present
     if(!req.files){
       res.status(400).send("req.file not present")
       return
     }
     console.log("Length " + req.files.length)
     console.log("File " + req.files.FormFieldName)
-    //Ensure file is not empty
+    //  Ensure file is not empty
     if(req.files.length == 0){
       res.status(400).send("File is empty")
       return
     }
-    console.log(req.files)
-    //assign as variables.
-    let file = req.files['file']
-    if(file == undefined){
+    //  Ensure file is not undefined
+    if(req.files['file'] == undefined){
       res.status(400).send("File is undefined")
       return
     }
-    //save file to s3
-    let uploadRes = await S3Client.uploadFile(file.data, "Testing_PNG_0.png")
-    if(uploadRes == -1){
-      res.status(400).send("Error uploading file")
-    }else{
-      res.status(200).send(uploadRes)
-    }
-  }
-);
+
+    //Saves file to temporary Local storage.
+    //Returns a success status if the file is successfully saved.
+    const file = req.files['file'];
+    const path = download_path + file.name;
+    
+    file.mv(path, async (err) => {
+      if(err){
+        res.status(400).send("Error saving file")
+        return
+      }
+      console.log ("File saved to " + path);
+      //Then begins uploading to S3 using multipart upload.
+      console.log("Uploading to S3")
+      let uploadRes = await S3Client.multipartUpload(path,file.name);
+      //Upon S3 Completion:
+      console.log("Upload Res: " + uploadRes);
+      //deletes the file from local storage
+      unlinkSync(path);
+      //updates the DB.
+      //TODO: Requires DB be set up with valid data.
+      //TODO; start requiring User Auth.
+      let dbRes = await prismaClient.createFile(file.name,"AUTHOR_ID","S3_URL","POST_ID");
+      //Then sends a new message to user.
+    });
+    
+    //console.log("Upload Res: " + uploadRes);
+    //deletes the file from local storage
+    //updates the DB.
+    //Then sends a new message to user.
+  });
+//get upload status update.
+
 //Update/Replace/Iterate the file.
 app.patch(
   '/api/files/:id',

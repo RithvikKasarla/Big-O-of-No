@@ -1,0 +1,27 @@
+Study topics:
+    Divide and Conquer:
+        Proof schema. [0]
+        Methodology. [1]
+        Recurrence Relation. [1]
+        Master Theorem. [1]
+        Time Complexity. [1]
+        THIRD PROBLEM.
+
+    Greedy:
+        Proof schema. [0]
+        Methodology. [1]
+        Time Complexity. [0]
+        JOB SCHEDULING [0]
+    
+    Dynamic Programming:
+        Proof schema. [0]
+        Methodology. [0]
+        Time Complexity.  [0]
+        Time Anaylsis of Recurrence Relation. [0]
+        STAMPS [0]
+
+Study Resources:
+    HW 1.
+    SIS Questions.
+
+    Presentation Questions.

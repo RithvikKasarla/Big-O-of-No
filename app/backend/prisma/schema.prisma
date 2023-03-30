@@ -10,55 +10,12 @@ datasource db {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model User {
   id      Int     @id @default(autoincrement())
-  email   String  @unique //Unique email for the user. I.e. no two users can have the same email.
-  name    String //Name of the user. Required.
-  classes Class[] //Many to many relationship with classes.
-  files   File[] //One to many relationship with files.
-  posts   Post[] //One to many relationship with posts.
+  email   String  @unique
+  name    String
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-//Class table.
-//Each class should have a unique name.
-//Each class can have multiple users.
-//Each class has a description.
-//User to Class is a many-to-many relationship.
-//The Name can't be null
 model Class {
   id    Int    @id @default(autoincrement())
-  name  String @unique //Unique name for the class.
-  users User[] //Many to many relationship with users.
-  posts Post[] //One to many relationship with posts.
-}
-
-//File table
-//Links to a unique s3 bucket asset.
-//Includes a name.
-//Owned by a single user.
-//User to File is a One-To-Many relationship.
-model File {
-  id        Int     @id @default(autoincrement())
-  name      String //Name of the file.
-  author    User    @relation(fields: [authorId], references: [id]) //Link to the user who uploaded the file.
-  authorId  Int //Link to the user who uploaded the file.
-  path      String  @unique //Unique path to the file (assumedly in a s3 bucket)
-  fileId    String  @unique //Unique id for the file. Used mostly for API lookup.
-  posts     Post[] //Many to many relationship with posts.
-}
-//Post Table.
-//Includes a required title.
-//Includes a required body.
-//Includes a required author.
-//Includes a required class.
-//Includes a required date.
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String //Title of the post.
-  body      String //Body of the post.
-  author    User    @relation(fields: [authorId], references: [id]) //Link to the user who created the post.
-  authorId  Int //Link to the user who created the post.
-  class     Class   @relation(fields: [classId], references: [id]) //Link to the class the post is in.
-  classId   Int //Link to the class the post is in.
-  date      DateTime //Date the post was created.
-  files     File[] //Many to many relationship with files.
+  name  String @unique
 }
