@@ -10,8 +10,9 @@ datasource db {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model User {
   id      Int     @id @default(autoincrement())
-  email   String  @unique
-  name    String
+  username String @unique
+  email    String  @unique
+  user_password String
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
