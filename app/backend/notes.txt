@@ -1,0 +1,35 @@
+
+
+
+
+Authentication:
+	Identifying WHO a person is.
+	Example:
+		Face Unlock
+Authorization.
+	Access rights
+	What a user has access to.
+
+AWS Cognito allows for User Registration, Sign in, and Access Control.
+- Scalable
+- Cost effective.
+- (Contains a storage and a EC2)
+- Supports OAuth 2.0
+- Keeps an active directory of users.
+
+
+Core Concepts:
+	User Pools
+		Identity Provider.
+		Mostly used to authenticate users for web platforms.
+		Can integrate signing options:
+			Users can register using:
+				Cognito directly
+				Google Sign on
+				Facebook,
+				etc.
+	Identity Pools.
+		Used to authorize users for AWS resources. (IAM, S3, etc.)
+		Can configure indentity pool with User Pools without any registration.
+
+

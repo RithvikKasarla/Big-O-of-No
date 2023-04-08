@@ -4,18 +4,10 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("SQL_DATABASE_URL")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model User {
-  id      Int     @id @default(autoincrement())
-  email   String  @unique
-  name    String
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model Class {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
+  id       Int    @id @default(autoincrement())
+  username String @unique
 }
