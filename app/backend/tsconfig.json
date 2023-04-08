@@ -1,0 +1,18 @@
+{
+    "compilerOptions" : {
+        "sourceMap" : true, //creates a map file
+        "target" : "es6", //ES6
+        "module" : "commonjs", //
+        "outDir": "./dist", //locates the output folder
+        "baseUrl": "./src", //locates the root of the project
+        "removeComments": true, //removes comments in dist
+        "incremental": true, //Doesn't rebuild the entire project.
+        "esModuleInterop": true, // imports without *
+    },
+    "include": [
+        "src/**/*" // includes all files in the src folder
+    ],
+    "exclude": [
+        "node_modules" // excludes node_modules
+    ]
+}
