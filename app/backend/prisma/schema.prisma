@@ -10,4 +10,34 @@ datasource db {
 model User {
   id       Int    @id @default(autoincrement())
   username String @unique
+  classes Class[]        @relation("ClassMembership")
+  posts Post[]           @relation("UserPosts")
+}
+
+
+model Class {
+  id Int             @id @default(autoincrement())
+  name String        @unique
+  description String?
+  members User[]    @relation("ClassMembership")
+  posts Post[]      @relation("ClassPosts")
+}
+
+model Post {
+  id Int             @id @default(autoincrement())
+  title String
+  content String?
+  author User        @relation("UserPosts", fields: [authorId], references: [id])
+  authorId Int //auto generated
+  class Class        @relation("ClassPosts", fields: [classId], references: [id])
+  classId Int //auto generated
+  files File[]       @relation("PostFiles")
+}
+
+model File {
+  id Int             @id @default(autoincrement())
+  filename String
+  url String
+  post Post          @relation("PostFiles", fields: [postId], references: [id])
+  postId Int //auto generated
 }
