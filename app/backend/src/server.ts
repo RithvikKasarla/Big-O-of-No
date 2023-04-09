@@ -9,6 +9,8 @@ import AuthController from './controllers/auth.controller';
 import ProtectedController from './controllers/protected.controller';
 //Control for CDN Controller
 import CDNController from './controllers/cdn.controller';
+//Control for Class Controller
+import ClassController from './controllers/class.controller';
 const app = new App({
     port: 3000,
     controllers: [
@@ -16,6 +18,7 @@ const app = new App({
         new AuthController(),
         new ProtectedController(),
         new CDNController(),
+        new ClassController(),
     ],
     middlewares: [
         bodyParser.json(),

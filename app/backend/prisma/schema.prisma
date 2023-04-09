@@ -28,6 +28,7 @@ model Post {
   id Int             @id @default(autoincrement())
   title String
   content String?
+  created_at DateTime @default(now())
   author User        @relation("UserPosts", fields: [authorId], references: [id])
   authorId Int //auto generated
   class Class        @relation("ClassPosts", fields: [classId], references: [id])
