@@ -88,7 +88,7 @@ class RDSService {
         }
     }
     //get ALL classes
-    public async getClasses(): Promise<any> {
+    public async getAllClasses(): Promise<any> {
         try {
             const data = await prisma.class.findMany({});
             console.log(data);
@@ -98,7 +98,24 @@ class RDSService {
             return error; //TODO: return error code
         }
     }
+    public async classExists(classId:number): Promise<boolean> {
+        try {
+            const data = await prisma.class.findFirst({
+                where: {
+                    id: classId
+                }
+            });
+            console.log(data);
+            if(data){
+                return true;
+            }
+            return false; //TODO: switch to json return 
+        }catch (error) {
+            console.log(error);
+            return false; //TODO: return error code
+        }
 
+    }
     //get classes from user
     //should include Class Ids
     public async getUserClasses(username:string): Promise<any> {
@@ -119,9 +136,54 @@ class RDSService {
             return error; //TODO: return error code
         }
     }
-
+    //add user to class
+    public async addUserToClass(username:string, classId:number): Promise<boolean> {
+        try {
+            const data = await prisma.class.update({
+                where: {
+                    id: classId
+                },
+                data: {
+                    members: {
+                        connect: {
+                            username: username
+                        }
+                    }
+                }
+            });
+            console.log(data);
+            return true; //TODO: switch to json return
+        }catch (error) {
+            console.log(error);
+            return false; //TODO: return error code
+        }
+    }
+    //determine if user is part of a class
+    public async isMember(username:string, classId:number): Promise<boolean> {
+        try {
+            const data = await prisma.class.findFirst({
+                where: {
+                    id: classId,
+                    members: {
+                        some: {
+                            username: username
+                        }
+                    }
+                }
+            });
+            console.log(data);
+            if(data){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (error) {
+            console.log(error);
+            return false; //TODO: return error code
+        }
+    }
     //create post
-    public async createPost(title:string, author:string, classname:string, content:string): Promise<boolean> {
+    public async createPost(title:string, author:string, classId:number, content:string): Promise<boolean> {
         try {
             const data = await prisma.post.create({
                 data: {
@@ -133,7 +195,7 @@ class RDSService {
                     },
                     class: {
                         connect: {
-                            name: classname
+                            id: classId
                         }
                     },
                     content: content,

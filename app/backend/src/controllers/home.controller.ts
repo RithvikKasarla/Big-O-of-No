@@ -14,7 +14,7 @@ class HomeController {
         // / returns => index.
         this.router.get('', this.index);
     }
-
+    
     index = (request: Request, response: Response) => {
         response.send('Hello World! -- Home Controller');
     }

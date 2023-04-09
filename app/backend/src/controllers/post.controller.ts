@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 
-import RDSService from 'services/rds.service';
+import RDSService from '../services/rds.service';
+
+import CognitoService from '../services/cognito.service';
 
 class PostController {
     public path = '/class/:classId/posts'; // Define the path for posts route
@@ -13,8 +15,8 @@ class PostController {
     public initializeRoutes() {
         // Get response for this.path for resource this.classPosts.
         this.router.get('', this.getPosts);
-        // Add other routes for handling posts, e.g. creating a new post, updating a post, etc.
-        // ...
+        // Create a new post.
+        this.router.post('', this.createPost);
     }
     
     getPosts = (request: Request, response: Response) => {
@@ -27,12 +29,26 @@ class PostController {
         return response.send(posts);
     }
     
-    creatPost = (request: Request, response: Response) => {
+    //Requires token.
+    createPost = async (request: Request, response: Response) => {
         // Retrieve classId from the request parameters
-        const { classId } = request.params;
-        // Create a new post for the given classId
+        const { classId} = request.params;
+        const  {title, token, content } = request.body;
+        // Get username from cognito.
+        const cognito = new CognitoService();
+        const username = await cognito.getUsername(token);
+        //Validate username, classId, title, and content
+        //title, author, 
+
+        //Make sure the user is a member of the class
         const rds = new RDSService();
-        const post = rds.createPost(classId, request.body);
+        const isMember = await rds.isMember(username, parseInt(classId));
+        if(!isMember){
+            return response.status(401).send("Unauthorized, user is not a member of the class.");
+        }
+        // Create a new post for the given classId
+        
+        const post = await rds.createPost(title, username, parseInt(classId), content)
         
         return response.send(post);
     };
