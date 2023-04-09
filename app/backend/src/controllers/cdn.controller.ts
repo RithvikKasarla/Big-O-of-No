@@ -17,6 +17,9 @@ import RDSService from '../services/rds.service';
 //File service.
 //Handles all file related operations.
 import FileService from '../services/files.service';
+//Cognito service.
+//Handles all cognito related operations.
+import CognitoService from '../services/cognito.service';
 //Later; Privately accessible, requires cognito.
 //for now, publically accessible.
 class CDNController{
@@ -49,7 +52,13 @@ class CDNController{
     postResource = async (request: Request, response: Response) => {
         //response.send('Hello World! -- CDN Controller -- POST');
 
-        const username = "johndoe69"; //should get this from Cognito.
+        const { token } = request.body;
+        if(!token){
+            return response.status(401).send("Unauthorized");
+        }
+        //Get username from Cognito.
+        const cognito = new CognitoService();
+        const username = await cognito.getUsername(token);
         let file;
         //Post a file to S3.
         //File should be posted to /username/filename  https://stackoverflow.com/questions/37963906/how-to-get-user-attributes-username-email-etc-using-cognito-identity-id

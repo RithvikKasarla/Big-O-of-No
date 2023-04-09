@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import AWS from 'aws-sdk'
 import crypto from 'crypto'
+import { PromiseResult } from 'aws-sdk/lib/request';
 
 
 class CognitoService {
@@ -37,7 +38,7 @@ class CognitoService {
         }
     }
     //Sign in a user
-    public async signIn(username: string, password: string): Promise<boolean> {
+    public async signIn(username: string, password: string): Promise<PromiseResult<AWS.CognitoIdentityServiceProvider.InitiateAuthResponse,AWS.AWSError>> {
         const params = {
             ClientId: this.clientId,
             AuthFlow: 'USER_PASSWORD_AUTH',
@@ -50,10 +51,10 @@ class CognitoService {
         try {
             const data = await this.cognitoIdentity.initiateAuth(params).promise();
             console.log(data);
-            return true;
+            return data;
         } catch (error) {
             console.log(error);
-            return false;
+            return error;
         }
     }
     //Confirm a user
@@ -71,6 +72,20 @@ class CognitoService {
         } catch (error) {
             console.log(error);
             return false;
+        }
+    }
+
+    public async getUsername(token:string): Promise<string> {
+        const params = {
+            AccessToken: token
+        };
+        try {
+            const data = await this.cognitoIdentity.getUser(params).promise();
+            console.log(data);
+            return data.Username;
+        } catch (error) {
+            console.log(error);
+            return '';
         }
     }
     //Generate a secret hash for the user

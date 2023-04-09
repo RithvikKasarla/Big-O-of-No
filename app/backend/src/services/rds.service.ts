@@ -3,6 +3,7 @@ dotenv.config();
 //import AWS from 'aws-sdk'
 //prisma
 import { PrismaClient } from '@prisma/client'
+import { promises } from 'dns';
 const prisma = new PrismaClient()
 
 
@@ -67,6 +68,48 @@ class RDSService {
         } catch (error) {
             console.log(error);
             return -1;
+        }
+    }
+    //create class
+    public async createClass(classname:string, description:string): Promise<boolean> {
+        try {
+            const data = await prisma.class.create({
+                data: {
+                    name: classname,
+                    description: description,
+                }
+            });
+            console.log(data);
+            return true; //TODO: switch to json return
+        } catch (error) {
+            console.log(error);
+            return false; //TODO: return error code
+        }
+    }
+    //create post
+    public async createPost(title:string, author:string, classname:string, content:string): Promise<boolean> {
+        try {
+            const data = await prisma.post.create({
+                data: {
+                    title: title,
+                    author: {
+                        connect: {
+                            username: author
+                        }
+                    },
+                    class: {
+                        connect: {
+                            name: classname
+                        }
+                    },
+                    content: content,
+                }
+            });
+            console.log(data);
+            return true; //TODO: switch to json return
+        } catch (error) {
+            console.log(error);
+            return false; //TODO: return error code
         }
     }
 }

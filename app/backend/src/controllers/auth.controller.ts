@@ -53,6 +53,7 @@ class AuthController {
         }
         return res.status(200).json({message: 'success'}).end();
     }
+    //Should passthrough json from cognito.
     signIn = (req: Request, res: Response) => {
         const result = validationResult(req);
         console.log(req.body)
@@ -61,15 +62,11 @@ class AuthController {
         }
         const {username, password} = req.body;
         const cognito = new CognitoService();
-        let success = cognito.signIn(username, password)
-            .then(success => {
-                if(success){
-                    return res.status(200).json({message: 'success'}).end();
-                }else{
-                    return res.status(500).json({message: 'failed'}).end();
-                }
-            });
-
+        let success = cognito.signIn(username, password).then((data) => {
+            return res.status(200).json(data).end();
+        }).catch((error) => {
+            return res.status(500).json(error).end();
+        });
         //Check to make sure the user exists in the database. 
         //If not, create the user.
     }
