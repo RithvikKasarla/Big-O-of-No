@@ -2,13 +2,14 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 //import AWS from 'aws-sdk'
 //prisma
-import { PrismaClient } from '@prisma/client'
+import { Post, PrismaClient } from '@prisma/client'
 import { promises } from 'dns';
 const prisma = new PrismaClient()
 
 
 //Accesses a MySQL Database via AWS RDS. 
 //Uses Prisma.
+//TODO: Split RDS controller into multiple controllers, for User Auth, File, Class, Post, etc.
 class RDSService {
     private config = {
         region: process.env.AWS_REGION,
@@ -86,6 +87,39 @@ class RDSService {
             return false; //TODO: return error code
         }
     }
+    //get ALL classes
+    public async getClasses(): Promise<any> {
+        try {
+            const data = await prisma.class.findMany({});
+            console.log(data);
+            return data; //TODO: switch to json return
+        }catch (error) {
+            console.log(error);
+            return error; //TODO: return error code
+        }
+    }
+
+    //get classes from user
+    //should include Class Ids
+    public async getUserClasses(username:string): Promise<any> {
+        try {
+            const data = await prisma.class.findMany({
+                where: {
+                    members: {
+                        some: {
+                            username: username
+                        }
+                    }
+                }
+            });
+            console.log(data);
+            return data; //TODO: switch to json return
+        }catch (error) {
+            console.log(error);
+            return error; //TODO: return error code
+        }
+    }
+
     //create post
     public async createPost(title:string, author:string, classname:string, content:string): Promise<boolean> {
         try {
@@ -112,6 +146,24 @@ class RDSService {
             return false; //TODO: return error code
         }
     }
+    //get posts from class
+    public async getClassPosts(classname:string): Promise<Array<Post>> {
+        try {
+            const data = await prisma.post.findMany({
+                where: {
+                    class: {
+                        name: classname
+                    }
+                }
+            });
+            console.log(data);
+            return data; //TODO: switch to json return
+        }catch (error) {
+            console.log(error);
+            return []; //TODO: return error code
+        }
+    }
+    
 }
 
 

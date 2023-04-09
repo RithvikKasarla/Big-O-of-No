@@ -5,6 +5,8 @@ dotenv.config();
 import express, { Request, Response} from 'express';
 import AuthMiddleware from '../middleware/auth.middleware';
 
+import PostController from './post.controller';
+
 import CognitoService from '../services/cognito.service';
 
 import RDSService from '../services/rds.service';
@@ -26,15 +28,14 @@ class ClassController {
         this.router.use(this.authMiddleware.verifyToken)
         // return a list of classes that the user is part of.
         this.router.get('', this.getClass);
-        // Add route for accessing posts for a particular class
-        this.router.get('/:classId/posts', this.classPosts);
-        // Add route for creating posts for a particular class
-        this.router.post('/:classId/posts', this.createPost);
+        // Adds the routes that pertain to posts.
+        this.router.use('/:classId/posts', new PostController().router);
 
     }
     
     getClass = async (request: Request, response: Response) => {
         //return a json of all classes that the user is in.
+        //Should include class ids.
         const { token } = request.body;
         if(!token){
             return response.status(401).send("Unauthorized, no token provided.");
@@ -63,14 +64,6 @@ class ClassController {
         }
         return response.status(200).send("Class created successfully.");
         //return class.
-    }
-    //retuns the json of the latest X posts for a particular class.
-    classPosts = async (request: Request, response: Response) => {
-        const { classId } = request.params;
-    }
-    //creates a post for a particular class.
-    createPost = async (request: Request, response: Response) => {
-        const { classId } = request.params;
     }
 }
 export default ClassController;
