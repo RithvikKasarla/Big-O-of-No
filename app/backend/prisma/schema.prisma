@@ -38,6 +38,6 @@ model File {
   id Int             @id @default(autoincrement())
   filename String
   url String
-  post Post          @relation("PostFiles", fields: [postId], references: [id])
-  postId Int //auto generated
+  post Post?          @relation("PostFiles", fields: [postId], references: [id])
+  postId Int? //auto generated
 }

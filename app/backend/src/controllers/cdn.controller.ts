@@ -85,8 +85,9 @@ class CDNController{
             console.log("Could not delete file: ", local_file_path);
         }
         // while file its being delete, create a MySQL File Entry for the file.
-        //Create a MySQL File Entry.
-        
+        //Create a MySQL File entry.
+        const rdsService = new RDSService();
+        let file_id = await rdsService.createFile(username, filename, s3_url);
     }
 }
 
