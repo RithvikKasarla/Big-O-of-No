@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 
 //Accesses a MySQL Database via AWS RDS. 
 //Uses Prisma.
-//TODO: Split RDS controller into multiple controllers, for User Auth, File, Class, Post, etc.
+//TODO: Split RDS Service into multiple services, for User Auth, File, Class, Post, etc.
 class RDSService {
     private config = {
         region: process.env.AWS_REGION,
