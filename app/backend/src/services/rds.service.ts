@@ -35,25 +35,38 @@ class RDSService {
         }
     }
     //create file
-    //Should return true if successful, false if not
-    public async createFile(username: string, filename: string, s3_url: string): Promise<boolean> {
+    //Should return the id if successful, 0 if already exists, -1 if error
+    public async createFile(username: string, filename: string, url: string): Promise<number> {
         try {
+            //check if already exists by s3_url 
+            const file = await prisma.file.findFirst({
+                where: {
+                    s3_url: url
+                }
+            });
+            if(file){
+                console.log(`File already exists!`);
+                return 0;
+            }
+
             const data = await prisma.file.create({
                 data: {
                     filename: filename,
-                    s3_url: s3_url,
-                    user: {
+                    s3_url: url,
+                    author: {
                         connect: {
                             username: username
                         }
                     }
                 }
             });
+            //check if already exists
+            
             console.log(data);
-            return true;
+            return data.id;
         } catch (error) {
             console.log(error);
-            return false;
+            return -1;
         }
     }
 }

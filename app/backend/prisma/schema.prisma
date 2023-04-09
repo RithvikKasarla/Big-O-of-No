@@ -12,6 +12,7 @@ model User {
   username String @unique
   classes Class[]        @relation("ClassMembership")
   posts Post[]           @relation("UserPosts")
+  files File[]           @relation("UserFiles")
 }
 
 
@@ -37,7 +38,9 @@ model Post {
 model File {
   id Int             @id @default(autoincrement())
   filename String
-  url String
+  s3_url String       @unique
+  author User        @relation("UserFiles", fields: [authorId], references: [id])
+  authorId Int //auto generated
   post Post?          @relation("PostFiles", fields: [postId], references: [id])
   postId Int? //auto generated
 }

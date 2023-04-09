@@ -47,9 +47,9 @@ class CDNController{
     //Currently only supports single file uploads (50-35MiB)
     //Post response for this.path for resource this.index.
     postResource = async (request: Request, response: Response) => {
-        response.send('Hello World! -- CDN Controller -- POST');
+        //response.send('Hello World! -- CDN Controller -- POST');
 
-        const username = "jeff"; //should get this from Cognito.
+        const username = "johndoe69"; //should get this from Cognito.
         let file;
         //Post a file to S3.
         //File should be posted to /username/filename  https://stackoverflow.com/questions/37963906/how-to-get-user-attributes-username-email-etc-using-cognito-identity-id
@@ -88,6 +88,12 @@ class CDNController{
         //Create a MySQL File entry.
         const rdsService = new RDSService();
         let file_id = await rdsService.createFile(username, filename, s3_url);
+        if(file_id == -1){
+            return response.status(500).send("Could not create file entry in MySQL.");
+        }
+        console.log("Created file entry in MySQL: ", file_id);
+
+        return response.status(200).send("File uploaded successfully."); //should include s3_url and databse id.
     }
 }
 
