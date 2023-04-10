@@ -32,15 +32,27 @@ class CDNController{
     public initializeRoutes() {
         //Get response for this.path for resource this.index.
         // /cdn returns => index.
-        this.router.get('', this.getResource);
+        this.router.get('', this.getFile);
+        this.router.get('/all', this.getAllFiles);
         //Post resposne for this.path for resource this.index.
         // /cdn returns => index.
-        this.router.post('', this.postResource);
+        this.router.post('', this.postFile);
     }
 
     //Get response for this.path for resource this.index.
-    getResource = async (request: Request, response: Response) => {
-        response.send('Hello World! -- CDN Controller -- GET');
+    getFile = async (request: Request, response: Response) => {
+        //check if request.query.user exists.
+        if(request.query.user){
+            //Call Get User Files.
+        }
+        //check if request.query.post exists.
+        if(request.query.post){
+            //Call Get Post Files.
+        }
+        
+    }
+    getAllFiles = async (request: Request, response: Response) => {
+        response.send('ALL');
         //response.send('Hello World! -- CDN Controller');
         
         //Get S3_URL of a file.
@@ -49,7 +61,7 @@ class CDNController{
     //Does not yet support multipart uploads, but will.
     //Currently only supports single file uploads (50-35MiB)
     //Post response for this.path for resource this.index.
-    postResource = async (request: Request, response: Response) => {
+    postFile = async (request: Request, response: Response) => {
         //response.send('Hello World! -- CDN Controller -- POST');
 
         const { token } = request.body;
@@ -64,7 +76,7 @@ class CDNController{
         //File should be posted to /username/filename  https://stackoverflow.com/questions/37963906/how-to-get-user-attributes-username-email-etc-using-cognito-identity-id
 
         //Validate the response
-        console.log("postResource validation not implemented yet.")
+        //console.log("postResource validation not implemented yet.")
         //
         file = request.files.file;
         const filename = file.name;

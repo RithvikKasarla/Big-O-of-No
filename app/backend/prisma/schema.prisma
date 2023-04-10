@@ -11,41 +11,36 @@ model User {
   id       Int     @id @default(autoincrement())
   username String  @unique
   files    File[]  @relation("UserFiles")
-  posts    Post[]  @relation("UserPosts")
   classes  Class[] @relation("ClassMembership")
+  comments Comment[] @relation("UserComments")
 }
 
 model Class {
   id          Int     @id @default(autoincrement())
   name        String  @unique
   description String?
-  posts       Post[]  @relation("ClassPosts")
+  files       File[]  @relation("ClassFiles")
   members     User[]  @relation("ClassMembership")
-}
-
-model Post {
-  id       Int     @id @default(autoincrement())
-  title    String
-  content  String?
-  authorId Int
-  classId  Int
-  files    File[]  @relation("PostFiles")
-  author   User    @relation("UserPosts", fields: [authorId], references: [id])
-  class    Class   @relation("ClassPosts", fields: [classId], references: [id])
-
-  @@index([authorId], map: "Post_authorId_fkey")
-  @@index([classId], map: "Post_classId_fkey")
 }
 
 model File {
   id       Int    @id @default(autoincrement())
-  filename String
-  postId   Int?
+  title    String
   s3_url   String @unique
+  rating   Int    @default(0)
   authorId Int
   author   User   @relation("UserFiles", fields: [authorId], references: [id])
-  post     Post?  @relation("PostFiles", fields: [postId], references: [id])
+  classId  Int
+  class    Class  @relation("ClassFiles", fields: [classId], references: [id])
+  //comments
+  comments Comment[] @relation("FileComments")
+}
 
-  @@index([authorId], map: "File_authorId_fkey")
-  @@index([postId], map: "File_postId_fkey")
+model Comment {
+  id      Int    @id @default(autoincrement())
+  content String
+  author  User @relation("UserComments", fields: [authorId], references: [id])
+  authorId Int
+  file    File @relation("FileComments", fields: [fileId], references: [id])
+  fileId  Int 
 }
