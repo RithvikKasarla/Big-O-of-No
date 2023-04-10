@@ -3,9 +3,9 @@ import React, { useState, useEffect } from "react";
 
 function LikeDislikeItem(
   likes: number,
-  dislikes: number
-  // Author: string,
-  // FileName: string
+  dislikes: number,
+  Author: string,
+  FileName: string
 ) {
   const [count, setCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);

@@ -49,6 +49,8 @@ function FileCard({
       <div className="px-6 py-4">
         <div className="font-bold text-sm mb-2 w-40">File: {FileName}</div>
         <p className="text-gray-700 text-xs w-40">Author: {Author}</p>
+        <div className="font-bold text-sm mb-2 w-40">File: {FileName}</div>
+        <p className="text-gray-700 text-xs w-40">Author: {Author}</p>
       </div>
       <div className="px-6 pt-2 pb-4">
         <LikeDislike
@@ -72,6 +74,9 @@ function FileCard({
 }
 
 export default FileCard;
+function onEffect(arg0: () => void, arg1: number[]) {
+  throw new Error("Function not implemented.");
+}
 function onEffect(arg0: () => void, arg1: number[]) {
   throw new Error("Function not implemented.");
 }

@@ -32,6 +32,7 @@ const ClassPageTemplate = ({ name, files }: Props) => {
   const getListOfFiles = async () => {
     const curLoc = router.query.slug ? router.query.slug[0] : "";
     console.log(router.query);
+
     const res = await fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`);
     const data = await res.json();
     setFileList(data);
