@@ -25,15 +25,21 @@ const Page = () => {
               PHYS
             </li>
           </Link>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            ENGL
-          </li>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            ENGR
-          </li>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            SOCI
-          </li>
+          <Link href="/engl">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              ENGL
+            </li>
+          </Link>
+          <Link href="/engr">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              ENGR
+            </li>
+          </Link>
+          <Link href="/soci">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              SOCI
+            </li>
+          </Link>
         </ul>
       </div>
     </div>

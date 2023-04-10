@@ -9,11 +9,15 @@ interface Comment {
 
 interface CommentFormProps {
   onCommentSubmit: (comment: Comment) => void;
+  showdefault: boolean;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ onCommentSubmit }) => {
+const CommentForm: React.FC<CommentFormProps> = ({
+  onCommentSubmit,
+  showdefault,
+}) => {
   const [text, setText] = useState("");
-  const [showDefaultComment, setShowDefaultComment] = useState(true);
+  const [showDefaultComment, setShowDefaultComment] = useState(showdefault);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);

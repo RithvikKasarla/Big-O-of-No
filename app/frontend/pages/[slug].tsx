@@ -5,12 +5,16 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Header from "../app/components/Header";
 import Page from "../app/components/sidebar";
+import SearchBar from "../app/components/SearchBar";
+import { constants } from "buffer";
+
 interface File {
   name: string;
   author: string;
   url: string;
   likes: number;
   dislikes: number;
+  id: number;
 }
 
 interface Props {
@@ -20,14 +24,14 @@ interface Props {
 
 const ClassPageTemplate = ({ name, files }: Props) => {
   const router = useRouter();
-  const [fileList, setFileList] = useState<File[]>([]);
-
+  const [fileList, setFileList] = useState<File[]>(files);
   useEffect(() => {
     setFileList(files);
-  }, []);
+  }, [files]);
 
   const getListOfFiles = async () => {
     const curLoc = router.query.slug ? router.query.slug[0] : "";
+    console.log(router.query);
     const res = await fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`);
     const data = await res.json();
     setFileList(data);
@@ -43,6 +47,7 @@ const ClassPageTemplate = ({ name, files }: Props) => {
             <span className="pl-5 pt-3">
               <p className="font-bold text-2xl">{name} Main Page</p>
               <hr className="mt-3 w-48 h-1 bg-gray-300 border-0 dark:bg-gray-600 rounded"></hr>
+              <Upload />
               <div className="pl-5 pt-3">
                 <p>Testing 123</p>
                 <p>Lorem ipsum dolor sit amet</p>
@@ -56,12 +61,13 @@ const ClassPageTemplate = ({ name, files }: Props) => {
                       likes={file.likes}
                       dislikes={file.dislikes}
                       ListOfFiles={getListOfFiles}
+                      id={file.id}
                     />
                   ))}
                 </div>
               </div>
             </span>
-            <Upload />
+            <SearchBar />
           </div>
         </div>
       </div>

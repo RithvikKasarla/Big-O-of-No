@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import CommentForm from "../components/CommentForm";
 import LikeDislike from "../components/LikeDislike";
@@ -12,8 +12,9 @@ interface Comment {
 
 const Comment: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([]);
-
+  const [showdefault, setShowDefault] = useState(true);
   // Here we send comments to backend and do checks
+
   const handleCommentSubmit = (newComment: Comment) => {
     setComments([...comments, newComment]);
   };
@@ -37,7 +38,10 @@ const Comment: React.FC = () => {
           ))}
         </ul>
       </div>
-      <CommentForm onCommentSubmit={handleCommentSubmit} />
+      <CommentForm
+        onCommentSubmit={handleCommentSubmit}
+        showdefault={showdefault}
+      />
     </div>
   );
 };
