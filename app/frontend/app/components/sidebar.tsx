@@ -15,21 +15,31 @@ const Page = () => {
               CSDS
             </li>
           </Link>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            MATH
-          </li>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            PHYS
-          </li>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            ENGL
-          </li>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            ENGR
-          </li>
-          <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
-            SOCI
-          </li>
+          <Link href="/math">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              MATH
+            </li>
+          </Link>
+          <Link href="/phys">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              PHYS
+            </li>
+          </Link>
+          <Link href="/engl">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              ENGL
+            </li>
+          </Link>
+          <Link href="/engr">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              ENGR
+            </li>
+          </Link>
+          <Link href="/soci">
+            <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              SOCI
+            </li>
+          </Link>
         </ul>
       </div>
     </div>

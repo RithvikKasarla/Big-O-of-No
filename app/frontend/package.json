@@ -9,7 +9,7 @@
     "@lyket/react": "^2.1.0",
     "@supabase/supabase-js": "^2.10.0",
     "axios": "^1.3.4",
-    "next": "latest",
+    "next": "^13.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-drag-drop-files": "^2.3.9",

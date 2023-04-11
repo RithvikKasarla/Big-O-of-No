@@ -1,10 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function LikeDislikeItem() {
+function LikeDislikeItem(
+  likes: number,
+  dislikes: number,
+  Author: string,
+  FileName: string
+) {
   const [count, setCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
+
+  useEffect(() => {
+    const count = likes.likes - likes.dislike;
+    console.log(count);
+    setCount(count);
+  }, []);
 
   const handleLike = () => {
     if (!isLiked) {
