@@ -16,10 +16,10 @@ import S3Service from '../services/s3.service';
 import RDSService from '../services/rds.service';
 //File service.
 //Handles all file related operations.
-import FileService from '../services/files.service';
+import FileService from '../services/localfs.service';
 //Cognito service.
 //Handles all cognito related operations.
-import CognitoService from '../services/cognito.service';
+import CognitoService from '../services/auth.service';
 //Later; Privately accessible, requires cognito.
 //for now, publically accessible.
 class CDNController{
@@ -32,37 +32,33 @@ class CDNController{
     public initializeRoutes() {
         //Get response for this.path for resource this.index.
         // /cdn returns => index.
-        this.router.get('', this.getFile);
+        this.router.get('', this.getFiles);
         this.router.get('/all', this.getAllFiles);
         //Post resposne for this.path for resource this.index.
         // /cdn returns => index.
-        this.router.post('', this.postFile);
+        this.router.post('', this.createFile);
     }
 
-    //Get response for this.path for resource this.index.
-    getFile = async (request: Request, response: Response) => {
-        //check if request.query.user exists.
-        if(request.query.user){
-            //Call Get User Files.
-        }
-        //check if request.query.post exists.
-        if(request.query.post){
-            //Call Get Post Files.
-        }
+    //Gets the files within the search query.
+    getFiles = async (request: Request, response: Response) => {
         
     }
+    //Gets all files.
     getAllFiles = async (request: Request, response: Response) => {
-        response.send('ALL');
-        //response.send('Hello World! -- CDN Controller');
-        
-        //Get S3_URL of a file.
-        //Should not require Cognito.
+
     }
-    //Does not yet support multipart uploads, but will.
-    //Currently only supports single file uploads (50-35MiB)
-    //Post response for this.path for resource this.index.
-    postFile = async (request: Request, response: Response) => {
-        //response.send('Hello World! -- CDN Controller -- POST');
+
+    //Deletes a file.
+    deleteFile = async (request: Request, response: Response) => {}
+
+    //Deletes a file.
+    deleteFileForced = async(request: Request, response: Response) => {}
+
+    //Creates a file.
+    createFile = async (request: Request, response: Response) => {
+        //Does not yet support multipart uploads, but will.
+        //Currently only supports single file uploads (50-35MiB)
+        //Post response for this.path for resource this.index.
 
         const { token } = request.body;
         if(!token){

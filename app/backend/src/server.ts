@@ -1,24 +1,30 @@
 import App from './app';
 import bodyParser from 'body-parser';
 
-//Control for Home Controller
-import HomeController from './controllers/home.controller';
-//Control for Auth Controller
+
+
+//auth controller
 import AuthController from './controllers/auth.controller';
-//Control for Protected Controller
-import ProtectedController from './controllers/protected.controller';
-//Control for CDN Controller
-import CDNController from './controllers/cdn.controller';
-//Control for Class Controller
+//class controller
 import ClassController from './controllers/class.controller';
+//comment controller
+import CommentController from './controllers/comment.controller';
+//file controller
+import FileController from './controllers/file.controller';
+//user controller
+import UserController from './controllers/user.controller';
+
+
+
 const app = new App({
     port: 3000,
     controllers: [
-        new HomeController(),
         new AuthController(),
-        new ProtectedController(),
-        new CDNController(),
         new ClassController(),
+        new CommentController(),
+        new FileController(),
+        new UserController(),
+        
     ],
     middlewares: [
         bodyParser.json(),
