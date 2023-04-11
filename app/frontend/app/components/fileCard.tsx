@@ -74,9 +74,3 @@ function FileCard({
 }
 
 export default FileCard;
-function onEffect(arg0: () => void, arg1: number[]) {
-  throw new Error("Function not implemented.");
-}
-function onEffect(arg0: () => void, arg1: number[]) {
-  throw new Error("Function not implemented.");
-}

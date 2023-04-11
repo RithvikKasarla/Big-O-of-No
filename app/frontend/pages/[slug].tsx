@@ -50,8 +50,6 @@ const ClassPageTemplate = ({ name, files }: Props) => {
               <hr className="mt-3 w-48 h-1 bg-gray-300 border-0 dark:bg-gray-600 rounded"></hr>
               <Upload />
               <div className="pl-5 pt-3">
-                <p>Testing 123</p>
-                <p>Lorem ipsum dolor sit amet</p>
                 <div className="grid grid-cols-4 gap-5">
                   {fileList.map((file, index) => (
                     <FileCard
@@ -84,9 +82,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   const { slug } = context.query;
   const name = slug.toUpperCase();
   const key = slug;
-  const res = await fetch(`http://localhost:3001/api/getAllFiles/${key}`);
-  const files = await res.json();
-
+  //const res = await fetch(`http://localhost:3001/api/getAllFiles/${key}`);
+  //const files = await res.json();
+  const files = [
+    { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
+    { name: "TEST", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
+    { name: "TEST2", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
+  ];
   return {
     props: {
       name,
