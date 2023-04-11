@@ -24,7 +24,7 @@ const app = new App({
         new CommentController(),
         new FileController(),
         new UserController(),
-        
+
     ],
     middlewares: [
         bodyParser.json(),

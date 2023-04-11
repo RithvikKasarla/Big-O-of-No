@@ -55,14 +55,14 @@ class AuthController {
         const result = validationResult(req);
         console.log(req.body)
         if(!result.isEmpty()){
-            return res.status(422).json({errors: result.array()})
+            return res.status(422).json({message:"Failed, likely invalid input.",errors: result.array()})
         }
         const {username, password} = req.body;
         const cognito = new CognitoService();
         let success = cognito.signIn(username, password).then((data) => {
             return res.status(200).json(data).end();
         }).catch((error) => {
-            return res.status(500).json(error).end();
+            return res.status(500).json({message:"Error with Cognito service."}).end();
         });
         //Check to make sure the user exists in the database. 
         //If not, create the user.
@@ -80,14 +80,14 @@ class AuthController {
         const cognito = new CognitoService();
         let cognito_succes = await cognito.verify(username, code)
         if(!cognito_succes){
-            return res.status(500).json({message: 'failed @ cognito'}).end();
+            return res.status(500).json({message: 'Error with Cognito service'}).end();
         }
         const rds = new RDSService();
         let rds_success = await rds.createUser(username);
         if(!rds_success){
-            return res.status(500).json({message: 'failed @ rds'}).end();
+            return res.status(500).json({message: 'Error with RDS service'}).end();
         }
-        return res.status(200).json({message: 'success'}).end();
+        return res.status(200).json({message: 'Success'}).end();
     }
 
     //Validate the body based on the type.

@@ -7,6 +7,7 @@ import { body, validationResult } from 'express-validator';
 
 //fileupload
 import fileUpload from 'express-fileupload';
+import AuthMiddleware from '../middleware/auth.middleware';
 
 //S3 service. 
 //Handles all S3 related operations.
@@ -23,36 +24,36 @@ import CognitoService from '../services/auth.service';
 //Later; Privately accessible, requires cognito.
 //for now, publically accessible.
 class CDNController{
-    public path = '/cdn';
+    public path = '/file';
     public router = express.Router();
+    private authMiddleware: AuthMiddleware;
     constructor() {
+        this.authMiddleware = new AuthMiddleware();
         this.initializeRoutes();
     }
 
     public initializeRoutes() {
-        //Get response for this.path for resource this.index.
-        // /cdn returns => index.
-        this.router.get('', this.getFiles);
-        this.router.get('/all', this.getAllFiles);
-        //Post resposne for this.path for resource this.index.
-        // /cdn returns => index.
-        this.router.post('', this.createFile);
+        this.router.use(this.authMiddleware.verifyToken);
     }
 
-    //Gets the files within the search query.
+    //returns a list of files that match the query parameters.
     getFiles = async (request: Request, response: Response) => {
-        
+        response.status(501).send("getFiles not implemented yet.")
     }
     //Gets all files.
     getAllFiles = async (request: Request, response: Response) => {
-
+        response.status(501).send("getAllFiles not implemented yet.")
     }
 
     //Deletes a file.
-    deleteFile = async (request: Request, response: Response) => {}
+    deleteFile = async (request: Request, response: Response) => {
+        response.status(501).send("deleteFile not implemented yet.")
+    }
 
     //Deletes a file.
-    deleteFileForced = async(request: Request, response: Response) => {}
+    deleteFileForced = async(request: Request, response: Response) => {
+        response.status(501).send("deleteFileForced not implemented yet.")
+    }
 
     //Creates a file.
     createFile = async (request: Request, response: Response) => {
