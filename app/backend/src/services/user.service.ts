@@ -16,12 +16,6 @@ class UserService {
     
     //Get users given an array of queries.
     public async getUsers(classId:number, userId:number, username:string): Promise<User[]> {
-        
-        //const classname = (classId == -1) ? "*" : (await prisma.class.findUnique({ where:{ id:classId}})).name;
-        //['name']
-        //const userId = (userId == -1) ? "*" : (await prisma.user.findUnique({ where:{ id:userId}})).username;
-
-
         const result = await prisma.user.findMany({
             where: {
                 ...((classId == -1) ? {} : {
@@ -38,7 +32,6 @@ class UserService {
                 ...((username == '') ? {} : {username: username}),
             }
         });
-        console.log(result);
         return result;
     }
     //Get User from a userId
