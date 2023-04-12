@@ -4,7 +4,7 @@ dotenv.config();
 import * as express from 'express';
 import { Request, Response} from 'express';
 import { body, validationResult } from 'express-validator';
-
+import {User} from '@prisma/client';
 //fileupload
 import fileUpload from 'express-fileupload';
 import AuthMiddleware from '../middleware/auth.middleware';
@@ -21,6 +21,7 @@ import FileService from '../services/localfs.service';
 //Cognito service.
 //Handles all cognito related operations.
 import CognitoService from '../services/auth.service';
+import UserService from '../services/user.service';
 //Later; Privately accessible, requires cognito.
 //for now, publically accessible.
 class CDNController{
@@ -29,11 +30,17 @@ class CDNController{
     private authMiddleware: AuthMiddleware;
     constructor() {
         this.authMiddleware = new AuthMiddleware();
-        this.initializeRoutes();
+        this.initializeTokenRoutes();
+        this.initializeAdminRoutes();
     }
 
-    public initializeRoutes() {
-        this.router.use(this.authMiddleware.verifyToken);
+    public initializeTokenRoutes() {
+        const tokenMiddleware = this.authMiddleware.verifyToken;
+        //this.router.use(this.authMiddleware.verifyToken); //All functions after this require a token.
+    }
+    public initializeAdminRoutes() {
+        const adminMiddleware = this.authMiddleware.verifyAdmin;
+        //this.router.use(this.authMiddleware.verifyAdmin) //All functions after this require admin.
     }
 
     //returns a list of files that match the query parameters.
@@ -65,9 +72,16 @@ class CDNController{
         if(!token){
             return response.status(401).send("Unauthorized");
         }
-        //Get username from Cognito.
-        const cognito = new CognitoService();
-        const username = await cognito.getUsername(token);
+        let user: User;
+        try {
+            user = await (new UserService()).getUser({token: token});
+            if(!user){
+                throw new Error("User not found.");
+            }
+        } catch (error) {
+            return response.status(500).send("Unhandled error.");
+        }
+        
         let file;
         //Post a file to S3.
         //File should be posted to /username/filename  https://stackoverflow.com/questions/37963906/how-to-get-user-attributes-username-email-etc-using-cognito-identity-id
@@ -84,7 +98,7 @@ class CDNController{
         //console.log("filename: ", file);
         //const filename = file.name;
         const fileService = new FileService();
-        const local_file_path = await fileService.downloadFile(username, file, filename); //should return path of file after its saved.
+        const local_file_path = await fileService.downloadFile(user.username, file, filename); //should return path of file after its saved.
         console.log("Saved file to: ", local_file_path);
         if(local_file_path == ""){
             return response.status(500).send("Could not download file.");
@@ -93,7 +107,7 @@ class CDNController{
         //Upload file to S3.
         const s3Service = new S3Service();
 
-        let s3_url = await s3Service.uploadFile(username, local_file_path, filename);
+        let s3_url = await s3Service.uploadFile(user.username, local_file_path, filename);
         console.log("Uploaded file to: ", s3_url);
         //Upon successful upload to S3, delete local file.
         let deleted_file = await fileService.deleteFile(local_file_path);
@@ -105,13 +119,19 @@ class CDNController{
         // while file its being delete, create a MySQL File Entry for the file.
         //Create a MySQL File entry.
         const rdsService = new RDSService();
-        let file_id = await rdsService.createFile(username, filename, s3_url);
+        let file_id = await rdsService.createFile(user.username, filename, s3_url);
         if(file_id == -1){
             return response.status(500).send("Could not create file entry in MySQL.");
         }
         console.log("Created file entry in MySQL: ", file_id);
 
         return response.status(200).send("File uploaded successfully."); //should include s3_url and databse id.
+    }
+
+    private async validateBody(type:string){
+        switch(type){
+            
+        }
     }
 }
 

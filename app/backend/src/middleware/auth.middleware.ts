@@ -22,7 +22,7 @@ class AuthMiddleware {
         const { token } = req.body;
         console.log(token)
         if (!token) {
-            console.log("No token") //CURRENT ISSUE.
+            console.log("No token")
             res.status(401).end();
             return;
         }
@@ -39,17 +39,26 @@ class AuthMiddleware {
         //look up the pem
         let pem = pems[kid];
         if(!pem){
-            res.status(401).json({ message: 'Unauthorized' }).end();
+            res.status(401).json({ message: 'Unauthorized, kId not in pem' }).end();
         }
         //verify the signature
         jwt.verify(token, pem, (err, payload) => {
             if(err){
-                res.status(401).json({ message: 'Unauthorized' }).end();
+                res.status(401).json({ message: 'Unauthorized, jwt not verified.' }).end();
             }else{
                 console.log("JWT Verified");
                 next(); //Call the next middleware
             }
         });
+    }
+    verifyAdmin(req: Request, res: Response, next): void {
+        const {admin_password} = req.body;
+        if(admin_password != process.env.HOST_ADMIN_PASSWORD){
+            res.status(401).json({ message: 'Unauthorized, admin_password incorrect.' }).end();
+        }else{
+            console.log("Admin verified")
+            next();
+        }
     }
     
     private async setUp(){

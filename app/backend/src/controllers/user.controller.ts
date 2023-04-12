@@ -13,13 +13,19 @@ class UserController {
 
     constructor() {
         this.authMiddleware = new AuthMiddleware();
-        this.initializeRoutes();
+        this.initializeAdminRoutes();
+        this.initializeTokenRoutes();
     }
 
-    public async initializeRoutes() {
-        this.router.get('/all', await this.validateBody('getUsersForced'),this.getUsersForced);
-        this.router.use(this.authMiddleware.verifyToken)
-        this.router.get('', await this.validateBody('getUsers'), this.getUsers);
+    public async initializeTokenRoutes() {
+        const tokenMiddleware = this.authMiddleware.verifyToken;
+        //this.router.use(this.authMiddleware.verifyToken) //All functions after this require a token.
+        this.router.get('', await this.validateBody('getUsers'),tokenMiddleware, this.getUsers);
+    }
+    public async initializeAdminRoutes() {
+        const adminMiddleware = this.authMiddleware.verifyAdmin;
+        //this.router.use(this.authMiddleware.verifyAdmin) //All functions after this require admin.
+        this.router.get('/all', await this.validateBody('getUsersForced'),adminMiddleware, this.getUsersForced);
     }
     
     //Given the query parameters, return a list of users.
@@ -35,16 +41,17 @@ class UserController {
         if(!classId && !userId && !username){
             return response.status(422).json({message: "Failed, at least one query parameter must be specified. Check if you mispelled the queries (case sensitive).",errors: result.array()})
         }
-        const parsedClassId = (classId) ? parseInt(classId.toString()) : -1;
-        const parsedUserId = (userId) ? parseInt(userId.toString()) : -1;
-        const parsedUsername = (username) ? username.toString() : '';
 
         //If querying by classId, make sure the user is a member of the class.
         console.warn("ClassID-scope checking not implemented yet.");
+        //if(not in classId){return 401}
 
-        console.log(parsedClassId, parsedUserId, parsedUsername)
-
-        const users = await (new UserService()).getUsers(parsedClassId, parsedUserId, parsedUsername);
+        let getUsersParams = await {
+            ...(classId) ? {classId: parseInt(classId.toString())} : {},
+            ...(userId) ? {userId: parseInt(userId.toString())} : {},
+            ...(username) ? {username: username.toString()} : {}
+        }
+        const users = await (new UserService()).getUsers(getUsersParams);
         response.status(200).send(users);
         //response.status(501).send("getUsers not implemented yet.")
     }
@@ -59,15 +66,14 @@ class UserController {
             return response.status(401).json({message: "Unauthorized,",errors: result.array()})
         }
         const {classId, userId, username} = request.query;
-        const parsedClassId = (classId) ? parseInt(classId.toString()) : -1;
-        const parsedUserId = (userId) ? parseInt(userId.toString()) : -1;
-        const parsedUsername = (username) ? username.toString() : '';
-
-        console.log(parsedClassId, parsedUserId, parsedUsername)
-
-        const users = await (new UserService()).getUsers(parsedClassId, parsedUserId, parsedUsername);
-
-        
+        const { token } = request.body;
+        let getUsersParams = await {
+            ...(classId) ? {classId: parseInt(classId.toString())} : {},
+            ...(userId) ? {userId: parseInt(userId.toString())} : {},
+            ...(username) ? {username: username.toString()} : {},
+            ...(token) ? {token: token.toString()} : {}
+        };
+        const users = await (new UserService()).getUsers(getUsersParams);
         return response.status(200).send(users);
     }
 
@@ -81,13 +87,6 @@ class UserController {
                 ];
             case 'getUsersForced':
                 return [
-                    body('admin_password').exists(),
-                    body('admin_password').custom((value) => {
-                        if(value != process.env.HOST_ADMIN_PASSWORD){
-                            throw new Error('Invalid admin password.');
-                        }
-                        return true;
-                    }),
                     query('classId').optional().isInt({min:1}),
                     query('userId').optional().isInt({min:1}),
                     query('username').optional().isString().notEmpty()

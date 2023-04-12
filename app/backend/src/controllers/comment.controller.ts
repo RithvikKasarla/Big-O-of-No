@@ -10,18 +10,24 @@ class CommentController {
 
     constructor() {
         this.authMiddleware = new AuthMiddleware();
-        this.initializeRoutes();
+        this.initializeTokenRoutes();
+        this.initializeAdminRoutes();
     }
 
-    public initializeRoutes() {
-        this.router.use(this.authMiddleware.verifyToken)
-    
+    public initializeTokenRoutes() {
+        const tokenMiddleware = this.authMiddleware.verifyToken;
+        //this.router.use(this.authMiddleware.verifyToken); //All functions after this require a token.
     }
-
+    public initializeAdminRoutes() {
+        const adminMiddleware = this.authMiddleware.verifyAdmin;
+        //this.router.use(this.authMiddleware.verifyAdmin) //All functions after this require admin.
+    }
     //Given the query parameters, return a list of comments.
     //Token is required.
     //Scoped to class.
-    getComments = async (request: Request, response: Response) => {}
+    getComments = async (request: Request, response: Response) => {
+        
+    }
 
     //Get ALL comments.
     //Admin only.
