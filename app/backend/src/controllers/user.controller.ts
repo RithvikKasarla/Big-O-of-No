@@ -16,10 +16,10 @@ class UserController {
         this.initializeRoutes();
     }
 
-    public initializeRoutes() {
-        this.router.get('/all', this.getUsersForced);
+    public async initializeRoutes() {
+        this.router.get('/all', await this.validateBody('getUsersForced'),this.getUsersForced);
         this.router.use(this.authMiddleware.verifyToken)
-        this.router.get('', this.getUsers);
+        this.router.get('', await this.validateBody('getUsers'), this.getUsers);
     }
     
     //Given the query parameters, return a list of users.
@@ -75,22 +75,15 @@ class UserController {
         switch(type){
             case 'getUsers':
                 return [
-                    body('token').exists(),
-                    body('token').custom(async (value) => {
-                        if((await (new CognitoService()).getUsername(value) ) == ''){
-                            throw new Error('Invalid token.');
-                        }
-                        return true;
-                    }),
                     query('classId').optional().isInt({min:1}),
                     query('userId').optional().isInt({min:1}),
                     query('username').optional().isString().notEmpty()
                 ];
-            case 'getAllUsers':
+            case 'getUsersForced':
                 return [
                     body('admin_password').exists(),
-                    body('admin_password').custom(async (value) => {
-                        if(value != process.env.ADMIN_PASSWORD){
+                    body('admin_password').custom((value) => {
+                        if(value != process.env.HOST_ADMIN_PASSWORD){
                             throw new Error('Invalid admin password.');
                         }
                         return true;

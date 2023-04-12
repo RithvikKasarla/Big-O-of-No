@@ -5,6 +5,7 @@ import { body, validationResult } from 'express-validator';
 
 import CognitoService from '../services/auth.service';
 import RDSService from '../services/rds.service';
+import { AWSError } from 'aws-sdk';
 //Publically accessible.
 //"Doorway" to getting COGNITO access.
 class AuthController {
@@ -51,7 +52,7 @@ class AuthController {
     }
     
     //Sign in a user, returns access token.
-    signIn = (req: Request, res: Response) => {
+    signIn = async (req: Request, res: Response) => {
         const result = validationResult(req);
         console.log(req.body)
         if(!result.isEmpty()){
@@ -59,13 +60,15 @@ class AuthController {
         }
         const {username, password} = req.body;
         const cognito = new CognitoService();
-        let success = cognito.signIn(username, password).then((data) => {
+        let cog_response = ( cognito.signIn(username, password)).then((data) => {
+            if(data['statusCode']){
+                return res.status(data['statusCode']).json({message: data['message']}).end();
+            }
             return res.status(200).json(data).end();
-        }).catch((error) => {
-            return res.status(500).json({message:"Error with Cognito service."}).end();
+        }).catch((err) => {
+            console.log("COG ERROR: " + JSON.stringify(err))
+            return res.status(500).json({message: 'Unhandled error.'}).end();
         });
-        //Check to make sure the user exists in the database. 
-        //If not, create the user.
     }
     
     //Verify user based on email code, and create user in RDS.
@@ -80,12 +83,12 @@ class AuthController {
         const cognito = new CognitoService();
         let cognito_succes = await cognito.verify(username, code)
         if(!cognito_succes){
-            return res.status(500).json({message: 'Error with Cognito service'}).end();
+            return res.status(500).json({message: 'Error with Cognito service.'}).end();
         }
         const rds = new RDSService();
         let rds_success = await rds.createUser(username);
         if(!rds_success){
-            return res.status(500).json({message: 'Error with RDS service'}).end();
+            return res.status(500).json({message: 'Error with RDS servic.'}).end();
         }
         return res.status(200).json({message: 'Success'}).end();
     }
