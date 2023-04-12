@@ -9,8 +9,6 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
-  const [showVerification, setShowVerification] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
 
   useEffect(() => {
     // Set isMounted to true after the component has been mounted on the client
@@ -47,7 +45,7 @@ const LoginPage = () => {
         .catch((error) => {
           console.error("Error:", error);
         });
-    } else if (!showVerification) {
+    } else {
       // do something with username, email, and password
       fetch(`${config.apiUrl}/auth/signup`, {
         method: "POST",
@@ -58,25 +56,6 @@ const LoginPage = () => {
           username,
           email,
           password,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-      setShowVerification(true);
-    } else {
-      fetch(`${config.apiUrl}/auth/verify`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          code: verificationCode,
         }),
       })
         .then((response) => response.json())
@@ -101,27 +80,7 @@ const LoginPage = () => {
           {isLogin ? "Login" : "Sign Up"}
         </h1>
         <form onSubmit={handleSubmit}>
-          {!isLogin && showVerification && (
-            <div className="mb-4">
-              <label
-                htmlFor="verificationCode"
-                className="block text-gray-700 font-bold mb-2"
-              >
-                Verification Code
-              </label>
-              <input
-                type="text"
-                id="verificationCode"
-                name="verificationCode"
-                value={verificationCode}
-                onChange={(event) => setVerificationCode(event.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Enter Verification Code"
-                required
-              />
-            </div>
-          )}
-          {!isLogin && !showVerification && (
+          {!isLogin && (
             <div className="mb-4">
               <label
                 htmlFor="email" // Update the "htmlFor" attribute to match the input field's "id"
@@ -140,44 +99,41 @@ const LoginPage = () => {
               />
             </div>
           )}
-          {!showVerification && (
-            <>
-              <div className="mb-4">
-                <label
-                  htmlFor="username"
-                  className="block text-gray-700 font-bold mb-2"
-                >
-                  Username
-                </label>
-                <input
-                  type="text"
-                  id="username"
-                  name="username"
-                  value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="password"
-                  className="block text-gray-700 font-bold mb-2"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  required
-                />
-              </div>
-            </>
-          )}
+
+          <div className="mb-4">
+            <label
+              htmlFor="username"
+              className="block text-gray-700 font-bold mb-2"
+            >
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-bold mb-2"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            />
+          </div>
           <button
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

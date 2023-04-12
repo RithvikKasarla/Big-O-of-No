@@ -17,7 +17,10 @@ class SearchBar extends React.Component<SearchBarProps, SearchBarState> {
   }
 
   onInputChange(event: ChangeEvent<HTMLInputElement>) {
-    this.setState({ term: event.target.value });
+    const term = event.target.value;
+    this.setState({ term });
+    console.log(term);
+    this.props.onSearch(term); // Call onSearch prop with the search term
   }
 
   onFormSubmit(event: FormEvent<HTMLFormElement>) {
