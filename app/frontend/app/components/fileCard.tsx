@@ -8,7 +8,6 @@ interface FileCardProps {
   Url: string;
   ListOfFiles: () => void;
   likes: number;
-  dislikes: number;
   id: number;
 }
 
@@ -21,7 +20,6 @@ function FileCard({
   dislikes,
   id,
 }: FileCardProps) {
-  const currentUser = "TEST1";
   const deleteFile = () => {
     fetch(`http://localhost:3001/api/files/${Url}`, {
       method: "DELETE",
@@ -33,14 +31,12 @@ function FileCard({
   };
 
   useEffect(() => {
-    console.log(likes, dislikes);
     setLikes(likes);
-    setDislikes(dislikes);
-  }, [likes, dislikes]);
+  }, [likes]);
 
+  const currentUser = "TEST1";
   const canDelete = currentUser === Author;
   const [likes_count, setLikes] = useState(0);
-  const [dislikes_count, setDislikes] = useState(0);
   return (
     <div className="rounded overflow-hidden shadow-lg">
       {/* <Document file={Url}>
@@ -53,12 +49,7 @@ function FileCard({
         <p className="text-gray-700 text-xs w-40">Author: {Author}</p>
       </div>
       <div className="px-6 pt-2 pb-4">
-        <LikeDislike
-          likes={likes_count}
-          dislike={dislikes_count}
-          Author={Author}
-          FileName={FileName}
-        />
+        <LikeDislike likes={likes_count} Author={Author} FileName={FileName} />
         <button
           onClick={() =>
             (location.href = "http://localhost:3000/discussion/" + id)

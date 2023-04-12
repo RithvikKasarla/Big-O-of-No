@@ -13,7 +13,6 @@ interface File {
   author: string;
   url: string;
   likes: number;
-  dislikes: number;
   id: number;
 }
 
@@ -25,6 +24,9 @@ interface Props {
 const ClassPageTemplate = ({ name, files }: Props) => {
   const router = useRouter();
   const [fileList, setFileList] = useState<File[]>(files);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredFiles, setFilteredFiles] = useState(files);
+
   useEffect(() => {
     setFileList(files);
   }, [files]);
@@ -36,6 +38,28 @@ const ClassPageTemplate = ({ name, files }: Props) => {
     const res = await fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`);
     const data = await res.json();
     setFileList(data);
+  };
+
+  // const filteredFiles = fileList.filter((file) =>
+  //   file.name.toLowerCase().startsWith(searchTerm.toLowerCase())
+  // );
+
+  const onSearch = (term: string) => {
+    if (term.startsWith("By:")) {
+      const author = term.substring(3);
+      const filtered = files.filter((file) =>
+        file.author.toLowerCase().startsWith(author.toLowerCase())
+      );
+      setFilteredFiles(filtered);
+    } else {
+      setFilteredFiles(
+        files.filter(
+          (file) =>
+            file.name.toLowerCase().includes(term.toLowerCase()) ||
+            file.author.toLowerCase().includes(term.toLowerCase())
+        )
+      );
+    }
   };
 
   return (
@@ -51,14 +75,13 @@ const ClassPageTemplate = ({ name, files }: Props) => {
               <Upload />
               <div className="pl-5 pt-3">
                 <div className="grid grid-cols-4 gap-5">
-                  {fileList.map((file, index) => (
+                  {filteredFiles.map((file, index) => (
                     <FileCard
                       key={`${file.url}_${index}`}
                       FileName={file.name}
                       Author={file.author}
                       Url={file.url}
                       likes={file.likes}
-                      dislikes={file.dislikes}
                       ListOfFiles={getListOfFiles}
                       id={file.id}
                     />
@@ -66,7 +89,7 @@ const ClassPageTemplate = ({ name, files }: Props) => {
                 </div>
               </div>
             </span>
-            <SearchBar />
+            <SearchBar onSearch={onSearch} />
           </div>
         </div>
       </div>
@@ -76,19 +99,51 @@ const ClassPageTemplate = ({ name, files }: Props) => {
 
 export default ClassPageTemplate;
 
+import { GetServerSideProps } from "next";
+import cookie from "cookie";
+
+interface Props {
+  name: string;
+  files: {
+    name: string;
+    author: string;
+    url: string;
+    likes: number;
+    dislike: number;
+  }[];
+}
+
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   const { slug } = context.query;
-  const name = slug.toUpperCase();
+  const name = slug.toLowerCase();
   const key = slug;
-  //const res = await fetch(`http://localhost:3001/api/getAllFiles/${key}`);
-  //const files = await res.json();
-  const files = [
-    { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
-    { name: "TEST", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
-    { name: "TEST2", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
-  ];
+  let files: {
+    name: string;
+    author: string;
+    url: string;
+    likes: number;
+    dislike: number;
+  }[] = [];
+  //console.log(context.req.headers.cookie?.split("=")[1]);
+  // Extract the authentication token from the request headers
+  //const cookies = cookie.parse(context.req.headers.cookie ?? "");
+  //console.log("--------------------------------");
+  //console.log(cookies);
+  const authToken = context.req.headers.cookie?.split("=")[1];
+  //cookies.token;
+
+  if (authToken) {
+    //const res = await fetch(`http://localhost:3001/api/getAllFiles/${key}`);
+    //const files = await res.json();
+    files = [
+      { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
+      { name: "TEST", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
+      { name: "TEST2", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
+    ];
+  }
+
   return {
     props: {
       name,
