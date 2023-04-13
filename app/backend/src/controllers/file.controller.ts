@@ -37,6 +37,9 @@ class CDNController{
     public initializeTokenRoutes() {
         const tokenMiddleware = this.authMiddleware.verifyToken;
         //this.router.use(this.authMiddleware.verifyToken); //All functions after this require a token.
+        this.router.get('',this.validateBody('getFiles'),tokenMiddleware, this.getFiles);
+        
+
     }
     public initializeAdminRoutes() {
         const adminMiddleware = this.authMiddleware.verifyAdmin;
@@ -48,7 +51,7 @@ class CDNController{
         response.status(501).send("getFiles not implemented yet.")
     }
     //Gets all files.
-    getAllFiles = async (request: Request, response: Response) => {
+    getFilesForced = async (request: Request, response: Response) => {
         response.status(501).send("getAllFiles not implemented yet.")
     }
 
@@ -128,9 +131,18 @@ class CDNController{
         return response.status(200).send("File uploaded successfully."); //should include s3_url and databse id.
     }
 
-    private async validateBody(type:string){
+    private validateBody(type:string){
         switch(type){
-            
+            case 'getFiles':
+                return [];
+            case 'getFilesForced':
+                return [];
+            case 'deleteFile':
+                return [];
+            case 'deleteFileForced':
+                return [];
+            case 'createFile':
+                return [];
         }
     }
 }

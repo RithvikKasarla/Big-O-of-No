@@ -194,7 +194,7 @@ class ClassController {
     //edit a class.
     //Admin only.
     editClass = async (request: Request, response: Response) => {
-
+        
     }
 
     //delete a class.
