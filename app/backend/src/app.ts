@@ -1,6 +1,6 @@
-import express from "express";
-import cors from "cors";
-import { Application } from "express";
+import express from 'express';
+import cors from 'cors';
+import { Application } from 'express';
 
 import fileUpload from "express-fileupload";
 
@@ -8,16 +8,15 @@ class App {
   public app: Application;
   public port: number;
 
-  constructor(appInit: { port: number; middlewares: any; controllers: any }) {
-    this.app = express();
-    this.port = appInit.port;
-    this.app.use(fileUpload());
-    this.app.use(cors);
-    //applies any middleware declared in server.ts
-    this.middlewares(appInit.middlewares);
-    //applies any controller declared in server.ts
-    this.routes(appInit.controllers);
-  }
+    constructor(appInit: {port:number, middlewares: any, controllers: any}) {
+        this.app = express();
+        this.port = appInit.port;
+        this.app.use(fileUpload());
+        this.app.use(cors());
+        //applies any middleware declared in server.ts
+        this.middlewares(appInit.middlewares);
+        //applies any controller declared in server.ts
+        this.routes(appInit.controllers);
 
   public listen() {
     this.app.listen(this.port, () => {
