@@ -17,7 +17,7 @@ import UserController from './controllers/user.controller';
 
 
 const app = new App({
-    port: 3000,
+    port: 3001,
     controllers: [
         new AuthController(),
         new ClassController(),
