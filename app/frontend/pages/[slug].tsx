@@ -45,7 +45,7 @@ const ClassPageTemplate = ({ name, files }: Props) => {
   // );
 
   const onSearch = (term: string) => {
-    if (term.startsWith("By:")) {
+    if (term.toLowerCase().trim().startsWith("by:")) {
       const author = term.substring(3);
       const filtered = files.filter((file) =>
         file.author.toLowerCase().startsWith(author.toLowerCase())

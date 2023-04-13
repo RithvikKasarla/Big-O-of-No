@@ -21,32 +21,40 @@ const LoginPage = () => {
     event.preventDefault();
     if (isLogin) {
       // do something with username and password
-      fetch(`${config.apiUrl}/auth/signin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          //console.log("Success:", data);
-          if (data) {
-            localStorage.setItem(
-              "token",
-              data.AuthenticationResult.AccessToken
-            );
-            console.log("token", data.AuthenticationResult.AccessToken);
-            console.log("token", localStorage.getItem("token"));
-            window.location.href = "/"; // Replace "/home" with the URL of your home page
-          }
+      console.log(username);
+      console.log(password);
+      console.log(config.apiUrl);
+      try {
+        fetch(`http://localhost:3001/auth/signin`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
         })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+          .then((response) => response.json())
+          .then((data) => {
+            //console.log("Success:", data);
+            if (data) {
+              localStorage.setItem(
+                "token",
+                data.AuthenticationResult.AccessToken
+              );
+              console.log("token", data.AuthenticationResult.AccessToken);
+              console.log("token", localStorage.getItem("token"));
+              window.location.href = "/"; // Replace "/home" with the URL of your home page
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+        console.log("WHYYY");
+      } catch (error) {
+        console.log(error);
+      }
     } else if (!showVerification) {
       // do something with username, email, and password
       fetch(`${config.apiUrl}/auth/signup`, {

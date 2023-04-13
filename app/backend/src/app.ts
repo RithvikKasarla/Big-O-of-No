@@ -3,8 +3,7 @@ import cors from 'cors';
 import { Application } from 'express';
 
 
-
-import fileUpload from 'express-fileupload';
+import fileUpload from "express-fileupload";
 
 class App {
     public app: Application;

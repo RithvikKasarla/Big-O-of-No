@@ -57,21 +57,21 @@ const Page = () => {
   const [classes, setClasses] = useState([]);
 
   useEffect(() => {
-    const fetchClasses = async () => {
-      const res = await fetch(`${config.apiUrl}/class/getClasses`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          token: localStorage.getItem("token"),
-        }),
-      });
-      const data = await res.json();
-      setClasses(data);
-    };
-    fetchClasses();
+    // const fetchClasses = async () => {
+    //   const res = await fetch(`${config.apiUrl}/class/getClasses`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+    //     },
+    //     body: JSON.stringify({
+    //       token: localStorage.getItem("token"),
+    //     }),
+    //   });
+    //   const data = await res.json();
+    //   setClasses(data);
+    // };
+    // fetchClasses();
   }, []);
 
   return (

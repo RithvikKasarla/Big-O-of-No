@@ -35,6 +35,12 @@ function Header() {
           >
             Discussion Board
           </Link>
+          <Link
+            href="/joinclasses"
+            className="m-1 px-2 py-1 bg-white text-blue-500 rounded-lg"
+          >
+            Join Classes
+          </Link>
         </div>
         <div>
           <Link
