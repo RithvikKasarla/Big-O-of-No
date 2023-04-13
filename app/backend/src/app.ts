@@ -14,12 +14,12 @@ class App {
         this.app = express();
         this.port = appInit.port;
         this.app.use(fileUpload());
+        //Using cors
         this.app.use(cors());
         //applies any middleware declared in server.ts
         this.middlewares(appInit.middlewares);
         //applies any controller declared in server.ts
         this.routes(appInit.controllers);
-
     }
 
     public listen(){
