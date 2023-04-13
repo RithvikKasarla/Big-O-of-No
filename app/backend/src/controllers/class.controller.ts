@@ -34,7 +34,7 @@ class ClassController {
         //this.router.use(this.authMiddleware.verifyAdmin) //All functions after this require admin.
         this.router.get('/all', await this.validateBody('getClassesForced'),adminMiddleware, this.getClassesForced);
         this.router.post('', await this.validateBody('createClass'),adminMiddleware, this.createClass);
-        this.router.delete('', await this.validateBody('deleteClass'),adminMiddleware, this.deleteClass);
+        this.router.delete('/:classId', await this.validateBody('deleteClass'),adminMiddleware, this.deleteClass);
     }
     //Gets a list of classes. Defaults to all the classes that the user has access to.
     //Supported Query Parameters: ?classId
@@ -119,7 +119,7 @@ class ClassController {
             return response.status(200).send({'message': 'Success'});
         } catch (error) {
             if(error.message === 'Class does not exist.') {
-                return response.status(404).json({message: error.message});
+                return response.status(404).json({message: "Class does not exist."});
             }else{
                 return response.status(500).json({message: error.message});
             }
@@ -207,7 +207,7 @@ class ClassController {
             return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
         }
         let classServiceRequestParams = {
-            classId: parseInt(request.query.classId.toString()),
+            classId: parseInt(request.params.classId.toString()),
         };
 
         try {
@@ -247,7 +247,7 @@ class ClassController {
                 return [];
             case 'deleteClass':
                 return [
-                    query('classId').isInt({min:1})
+                    param('classId').isInt({min:1})
                 ];
         }
     }
