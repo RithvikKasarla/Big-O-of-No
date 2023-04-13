@@ -20,12 +20,12 @@ class UserController {
     public async initializeTokenRoutes() {
         const tokenMiddleware = this.authMiddleware.verifyToken;
         //this.router.use(this.authMiddleware.verifyToken) //All functions after this require a token.
-        this.router.get('', await this.validateBody('getUsers'),tokenMiddleware, this.getUsers);
+        this.router.post('', await this.validateBody('getUsers'),tokenMiddleware, this.getUsers);
     }
     public async initializeAdminRoutes() {
         const adminMiddleware = this.authMiddleware.verifyAdmin;
         //this.router.use(this.authMiddleware.verifyAdmin) //All functions after this require admin.
-        this.router.get('/all', await this.validateBody('getUsersForced'),adminMiddleware, this.getUsersForced);
+        this.router.post('/all', await this.validateBody('getUsersForced'),adminMiddleware, this.getUsersForced);
     }
     
     //Given the query parameters, return a list of users.
