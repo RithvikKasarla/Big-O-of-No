@@ -25,15 +25,15 @@ class ClassController {
     public async initializeTokenRoutes() {
         const tokenMiddleware = this.authMiddleware.verifyToken;
         //this.router.use(this.authMiddleware.verifyToken); //All functions after this require a token.
-        this.router.get('', await this.validateBody('getClasses'),tokenMiddleware, this.getClasses);
+        this.router.post('', await this.validateBody('getClasses'),tokenMiddleware, this.getClasses);
         this.router.put('/:classId/join', await this.validateBody('joinClass'),tokenMiddleware, this.joinClass);
         this.router.put('/:classId/leave', await this.validateBody('leaveClass'),tokenMiddleware, this.leaveClass);
+        this.router.post('/all', await this.validateBody('getClassesForced'),tokenMiddleware, this.getClassesForced);
     }
     public async initializeAdminRoutes() {
         const adminMiddleware = this.authMiddleware.verifyAdmin;
         //this.router.use(this.authMiddleware.verifyAdmin) //All functions after this require admin.
-        this.router.get('/all', await this.validateBody('getClassesForced'),adminMiddleware, this.getClassesForced);
-        this.router.post('', await this.validateBody('createClass'),adminMiddleware, this.createClass);
+        this.router.put('', await this.validateBody('createClass'),adminMiddleware, this.createClass);
         this.router.delete('/:classId', await this.validateBody('deleteClass'),adminMiddleware, this.deleteClass);
     }
     //Gets a list of classes. Defaults to all the classes that the user has access to.

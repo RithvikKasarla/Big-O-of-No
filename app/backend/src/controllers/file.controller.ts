@@ -3,7 +3,7 @@ dotenv.config();
 
 import * as express from 'express';
 import { Request, Response} from 'express';
-import { body, validationResult } from 'express-validator';
+import { body,param, query, validationResult } from 'express-validator';
 import {User} from '@prisma/client';
 //fileupload
 import fileUpload from 'express-fileupload';
@@ -37,13 +37,16 @@ class CDNController{
     public initializeTokenRoutes() {
         const tokenMiddleware = this.authMiddleware.verifyToken;
         //this.router.use(this.authMiddleware.verifyToken); //All functions after this require a token.
-        this.router.get('',this.validateBody('getFiles'),tokenMiddleware, this.getFiles);
-        
+        this.router.post('',this.validateBody('getFiles'),tokenMiddleware, this.getFiles);
+        this.router.delete('/:fileId',this.validateBody('deleteFile'),tokenMiddleware, this.deleteFile);
+        this.router.put('',this.validateBody('createFile'),tokenMiddleware, this.createFile);
 
     }
     public initializeAdminRoutes() {
         const adminMiddleware = this.authMiddleware.verifyAdmin;
         //this.router.use(this.authMiddleware.verifyAdmin) //All functions after this require admin.
+        this.router.post('/all',this.validateBody('getFilesForced'),adminMiddleware, this.getFilesForced);
+        this.router.delete('/all/:fileId',this.validateBody('deleteFileForced'),adminMiddleware, this.deleteFileForced);
     }
 
     //returns a list of files that match the query parameters.
@@ -134,11 +137,19 @@ class CDNController{
     private validateBody(type:string){
         switch(type){
             case 'getFiles':
-                return [];
+                return [
+                    //?classId
+                    //?userId
+                    //?fileId
+                    //?username
+                    //>
+                ];
             case 'getFilesForced':
                 return [];
             case 'deleteFile':
-                return [];
+                return [
+                    param('fileId').isInt({min: 1})
+                ];
             case 'deleteFileForced':
                 return [];
             case 'createFile':
