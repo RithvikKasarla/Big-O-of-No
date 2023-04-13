@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { Application } from 'express';
 
 
@@ -13,6 +14,7 @@ class App {
         this.app = express();
         this.port = appInit.port;
         this.app.use(fileUpload());
+        this.app.use(cors());
         //applies any middleware declared in server.ts
         this.middlewares(appInit.middlewares);
         //applies any controller declared in server.ts
