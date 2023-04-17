@@ -23,14 +23,14 @@ class AuthMiddleware {
         console.log(token)
         if (!token) {
             console.log("No token")
-            res.status(401).end();
+            res.status(401).json({message:"No Token"}).end();
             return;
         }
         
         let decodedJwt: any = jwt.decode(token, { complete: true });
         if (decodedJwt === null) {
             console.log("Invalid token")
-            res.status(401).end()
+            res.status(401).json({message:"Invalid Token"}).end()
             return;
         }
         console.log(decodedJwt)

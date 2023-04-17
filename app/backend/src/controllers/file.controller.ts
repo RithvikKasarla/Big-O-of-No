@@ -68,7 +68,11 @@ class CDNController{
         response.status(501).send("deleteFileForced not implemented yet.")
     }
 
-    //Creates a file.
+    // Creates a file.
+    // Requires a file to be uploaded.
+    // Requires a token in the body.
+    // Requires a classId in the params.
+    // Requires a title in the body.
     createFile = async (request: Request, response: Response) => {
         //Does not yet support multipart uploads, but will.
         //Currently only supports single file uploads (50-35MiB)
@@ -153,7 +157,9 @@ class CDNController{
             case 'deleteFileForced':
                 return [];
             case 'createFile':
-                return [];
+                return [
+                    
+                ];
         }
     }
 }
