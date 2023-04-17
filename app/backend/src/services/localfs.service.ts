@@ -4,7 +4,7 @@ dotenv.config();
 //fs
 import fs from 'fs';
 //Handles the management of local files.
-class FileService{
+class LocalFileService{
     private config = {
 
     }
@@ -75,4 +75,4 @@ class FileService{
     }
 }
 
-export default FileService;
+export default LocalFileService;
