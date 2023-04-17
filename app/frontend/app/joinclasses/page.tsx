@@ -1,16 +1,20 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import config from "../../config";
+import { useContext } from "react";
+import { HeaderContext } from "../HeaderContext";
 
 function JoinClassesPage() {
   const [classes, setClasses] = useState<{ id: number; name: string }[]>([]);
   const [selectedClasses, setSelectedClasses] = useState<number[]>([]);
+  const { setHeaderData, headerData } = useContext(HeaderContext);
 
   useEffect(() => {
     fetch(`${config.apiUrl}/class/all`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
         token: localStorage.getItem("token"),
@@ -22,7 +26,7 @@ function JoinClassesPage() {
       })
       .then((data) => setClasses(data))
       .catch((error) => console.log(error)); // always add a catch block to handle errorsgi
-  });
+  }, []);
 
   function handleClassSelection(classId: number) {
     const isSelected = selectedClasses.includes(classId);
@@ -33,24 +37,77 @@ function JoinClassesPage() {
     }
   }
 
-  function handleJoinClasses() {
-    // send an API call to join the selected classes
-    const promises = selectedClasses.map((classId) =>
-      fetch(`/api/classes/${classId}/join`, { method: "POST" })
-    );
-    Promise.all(promises)
-      .then((responses) => {
-        if (responses.every((r) => r.ok)) {
-          alert("You have joined the selected classes!");
-        } else {
-          alert("Failed to join some classes.");
-        }
+  // function handleJoinClasses(e) {
+  //   e.preventDefault();
+  //   // send an API call to join the selected classes
+  //   const promises = selectedClasses.map((classId) => {
+  //     console.log(localStorage.getItem("token"));
+  //     console.log(classId);
+  //     return fetch(`${config.apiUrl}/class/${classId}/join`, {
+  //       method: "PUT",
+  //       body: JSON.stringify({
+  //         token: localStorage.getItem("token"),
+  //       }),
+  //     })
+  //       .then((response) => {
+  //         return response.json();
+  //       })
+  //       .then((data) => setClasses(data))
+  //       .catch((error) => console.log(error));
+  //   });
+
+  //   Promise.all(promises).then((results) => {
+  //     console.log(results);
+  //     console.log("RAISED");
+  //     // Set the classes-updated flag in localStorage to trigger an update of the class list
+  //     localStorage.setItem("classes-updated", "true");
+  //     setHeaderData((headerData) => !headerData);
+  //   });
+  // }
+
+  function handleJoinClasses(e) {
+    e.preventDefault();
+    const promises = selectedClasses.map((classId) => {
+      return fetch(`${config.apiUrl}/class/${classId}/join`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          token: localStorage.getItem("token"),
+        }),
       })
-      .catch((error) => {
-        console.error("Failed to join the classes:", error);
-        alert("Failed to join some classes.");
+        .then((response) => {
+          return response.json();
+        })
+        .catch((error) => console.log(error));
+    });
+
+    Promise.all(promises)
+      .then(() => {
+        // Fetch the updated list of classes and update the classes state
+        fetch(`${config.apiUrl}/class/all`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            token: localStorage.getItem("token"),
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => setClasses(data))
+          .catch((error) => console.log(error));
+      })
+      .then(() => {
+        // Set the classes-updated flag in localStorage to trigger an update of the class list
+        localStorage.setItem("classes-updated", "true");
+        setHeaderData((headerData) => !headerData);
       });
   }
+
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-8">Classes</h1>
@@ -82,3 +139,17 @@ function JoinClassesPage() {
 }
 
 export default JoinClassesPage;
+
+// Promise.all(promises)
+//   .then((responses) => {
+//     console.log(responses);
+//     if (responses.every((r) => r.ok)) {
+//       alert("You have joined the selected classes!");
+//     } else {
+//       alert("Failed to join some classes.");
+//     }
+//   })
+//   .catch((error) => {
+//     console.error("Failed to join the classes:", error);
+//     alert("Failed to join some classes.");
+//   });

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import config from "../../config";
+import cookie from "cookie";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -25,7 +26,7 @@ const LoginPage = () => {
       console.log(password);
       console.log(config.apiUrl);
       try {
-        fetch(`http://localhost:3001/auth/signin`, {
+        fetch(`${config.apiUrl}/auth/signin`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -37,12 +38,23 @@ const LoginPage = () => {
         })
           .then((response) => response.json())
           .then((data) => {
-            //console.log("Success:", data);
+            console.log("Success:", data);
             if (data) {
               localStorage.setItem(
                 "token",
                 data.AuthenticationResult.AccessToken
               );
+              localStorage.setItem("username", username);
+
+              const maxAge = 3600;
+              const expires = new Date(
+                Date.now() + maxAge * 1000
+              ).toUTCString();
+              const cookieValue = `authToken=${data.AuthenticationResult.AccessToken}; expires=${expires}; path=/`;
+
+              document.cookie = cookieValue;
+
+              console.log("ISER", localStorage.getItem("username"));
               console.log("token", data.AuthenticationResult.AccessToken);
               console.log("token", localStorage.getItem("token"));
               window.location.href = "/"; // Replace "/home" with the URL of your home page

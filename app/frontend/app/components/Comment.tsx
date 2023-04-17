@@ -31,8 +31,8 @@ const Comment: React.FC = () => {
               {comment.text}
               <div className="text-xs text-stone-500 flex justify-between">
                 {comment.user}
-
-                <LikeDislike />
+                {/* {comment.l}
+                <LikeDislike /> */}
               </div>
             </li>
           ))}

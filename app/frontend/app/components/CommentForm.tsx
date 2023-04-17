@@ -28,7 +28,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     const newComment: Comment = {
       id: Date.now(),
       text: text,
-      user: "-gsk49",
+      user: "-" + localStorage.getItem("username"),
     };
     onCommentSubmit(newComment);
     setText("");
