@@ -50,6 +50,14 @@ class CDNController{
         // Does not support query parameters.
         // POST URL/class/:classId/file
         this.router.put('/class/:classId/file',this.validateBody('createFile'),tokenMiddleware, this.createFileChaining);
+        //Like a file.
+        // Does not support query parameters.
+        // POST URL/file/:fileId/like
+        this.router.post('/file/:fileId/like',this.validateBody('likeFile'),tokenMiddleware, this.likeFile);
+        //Dislike a file.
+        // Does not support query parameters.
+        // POST URL/file/:fileId/dislike
+        this.router.post('/file/:fileId/dislike',this.validateBody('dislikeFile'),tokenMiddleware, this.dislikeFile);
         
     }
     public initializeAdminRoutes() {
@@ -191,6 +199,40 @@ class CDNController{
             return response.status(500).json({ message: "Error occurred.", error: err.message });
         }
     }
+    likeFile = async (request: Request, response: Response) => {
+        const {fileId} = request.params;
+        const {token} = request.body;
+        
+        try {
+            const fileService = new FileService();
+            const userService = new UserService();
+            const user:User = await userService.getUser({ token: token.toString() });
+            const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
+            const file:File = files[0];
+            let likedFile:File = await fileService.likeFile({fileId: file.id, userId: user.id});
+
+            return response.status(200).send({ message: "Successfully liked file.", file: likedFile });
+        } catch (error) {
+            return response.status(500).send({ message: "File Service error.", error: error });
+        }
+    }
+    dislikeFile = async (request: Request, response: Response) => {
+        const {fileId} = request.params;
+        const {token} = request.body;
+        
+        try {
+            const fileService = new FileService();
+            const userService = new UserService();
+            const user:User = await userService.getUser({ token: token.toString() });
+            const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
+            const file:File = files[0];
+            let dislikedFile:File = await fileService.dislikeFile({fileId: file.id, userId: user.id});
+
+            return response.status(200).send({ message: "Successfully disliked file.", file: dislikedFile });
+        } catch (error) {
+            return response.status(500).send({ message: "File Service error.", error: error });
+        }
+    }
 
     private validateBody(type:string){
         switch(type){
@@ -224,6 +266,15 @@ class CDNController{
                 body('title').isString().isLength({min: 1, max: 255}),
                 param('classId').isInt({min: 1}),
             ];
+            case 'likeFile':
+            return [
+                param('fileId').isInt({min: 1})
+            ];
+            case 'dislikeFile':
+            return [
+                param('fileId').isInt({min: 1})
+            ];
+
         }
     }
 }
