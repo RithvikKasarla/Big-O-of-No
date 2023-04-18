@@ -83,6 +83,7 @@ class FileService {
                 include: {
                     likes: true,
                     dislikes: true,
+                    author: true,
                 }
             });
             console.log(`Found ${result.length} files matching classId = ${classId} userId =  ${userId} username = ${username} fileId = ${fileId} title = ${title}`);
