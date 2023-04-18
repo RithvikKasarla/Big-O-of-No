@@ -167,7 +167,9 @@ class CDNController{
         if(!file){
             return response.status(400).send("No file was uploaded.");
         }
-        const filename = file['name'];
+        let filename = file['name'];
+        //Replace spaces with underscores.
+        filename = filename.replace(/ /g, "_");
         const {token} = request.body;
         const title:string = request.body.title;
         const {classId} = request.params;
