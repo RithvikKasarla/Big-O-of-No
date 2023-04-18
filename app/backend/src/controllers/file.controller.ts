@@ -117,8 +117,9 @@ class CDNController{
             const fileService = new FileService();
             const userService = new UserService();
             const user:User = await userService.getUser({ token: token.toString() });
-            const file:File = await fileService.getFiles({fileId: parseInt(fileId)})[0];
-
+            const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
+            const file:File = files[0];
+            console.log(`File: ${JSON.stringify(file)}`)
             if(user.id != file.authorId){
                 return response.status(401).send({ message: "Unauthorized.", error: "User does not own file." });
             }
@@ -126,7 +127,7 @@ class CDNController{
 
             return response.status(200).send({ message: "Successfully deleted file.", file: deletedFile });
         } catch (error) {
-            return response.status(500).send({ message: "File Service error.", error: error });
+            return response.status(500).send({ message: "File Service error.", error: error.message });
         }
     }
     
@@ -139,7 +140,7 @@ class CDNController{
             const fileService = new FileService();
             //const userService = new UserService();
             //const user:User = await userService.getUser({ token: token.toString() });
-            const file:File = await fileService.getFiles({fileId: parseInt(fileId)})[0];
+            const file:File = (await fileService.getFiles({fileId: parseInt(fileId)}))[0];
             let deletedFile:File = await fileService.deleteFile({fileId: file.id});
 
             return response.status(200).send({ message: "Successfully deleted file.", file: deletedFile });

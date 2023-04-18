@@ -32,7 +32,8 @@ class FileService {
                     ...((title == '') ? {} : {title: title}),
                 },
             });
-
+            console.log(`Found ${result.length} files matching classId = ${classId} userId =  ${userId} username = ${username} fileId = ${fileId} title = ${title}`);
+            console.log(`Result: ${JSON.stringify(result)}`);
             return result;
         } catch (error) {
             throw error;
