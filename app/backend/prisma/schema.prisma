@@ -31,7 +31,6 @@ model File {
   s3_url   String    @unique
   authorId Int
   classId  Int
-  rating   Int       @default(0)
   title    String
   comments Comment[] @relation("FileComments")
   author   User      @relation("UserFiles", fields: [authorId], references: [id])
