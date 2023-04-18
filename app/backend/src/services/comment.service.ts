@@ -10,5 +10,9 @@ class CommentService {
     constructor () {
 
     }
+    async getComments(){}
+    async createComment(){}
+    async deleteComment(){}
+    
 }
 export default CommentService;

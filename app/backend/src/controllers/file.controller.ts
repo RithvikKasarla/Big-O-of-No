@@ -14,7 +14,7 @@ import AuthMiddleware from '../middleware/auth.middleware';
 import S3Service from '../services/s3.service';
 //RDS service. 
 //Handles all RDS related operations.
-import RDSService from '../services/rds.service';
+//import RDSService from '../services/rds.service';
 //File service.
 //Handles all file related operations.
 import LocalFileService from '../services/localfs.service';
