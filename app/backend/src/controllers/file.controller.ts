@@ -39,13 +39,13 @@ class CDNController{
         const tokenMiddleware = this.authMiddleware.verifyToken;
         //this.router.use(this.authMiddleware.verifyToken); //All functions after this require a token.
         //Get files, scoped to the user's classes.
-        //Supports query parameters {classId, userId, username, fileId, title}
+        //Supports query parameters {userId, username, fileId, title}
         // POST URL/file
         this.router.post('/class/:classId/file',this.validateBody('getFiles'),tokenMiddleware, this.getFiles);
         //Delete a file.
         // Does not support query parameters.
         // DELETE URL/class/:classId/file/:fileId
-        this.router.delete('/class/:classId/file/:fileId',this.validateBody('deleteFile'),tokenMiddleware, this.deleteFile);
+        this.router.delete('/file/:fileId',this.validateBody('deleteFile'),tokenMiddleware, this.deleteFile);
         //Create a file.
         // Does not support query parameters.
         // POST URL/class/:classId/file
@@ -61,47 +61,91 @@ class CDNController{
         //Delete a file forcibly.
         // Does not support query parameters.
         // DELETE URL/file/all/:fileId
-        this.router.delete('/file/:fileId',this.validateBody('deleteFileForced'),adminMiddleware, this.deleteFileForced);
+        this.router.delete('/file/all/:fileId',this.validateBody('deleteFileForced'),adminMiddleware, this.deleteFileForced);
     }
     
     //returns a list of files that match the query parameters.
     getFiles = async (request: Request, response: Response) => {
         //Determine the queries.
         const {classId} = request.params;
-        const {userId, username, fileId, title} = request.query;
         //Determine the user's class scope.
-        const {token} = request.body;
-        const userService = new UserService();
-        const user:User = await userService.getUser({ token: token.toString() });
+        //const {token} = request.body;
+        //const userService = new UserService();
+        //const user:User = await userService.getUser({ token: token.toString() });
         //Build params from queries.
         const fileSearchParams = {
-            ...(classId) ? {classId: parseInt(classId)} : {},
+            classId: parseInt(classId),
             ...(request.query.userId) ? {userId: parseInt(request.query.userId.toString())} : {},
             ...(request.query.username) ? {username: request.query.username.toString()} : {},
             ...(request.query.fileId) ? {fileId: parseInt(request.query.fileId.toString())} : {},
         }
-
         //Get the files.
         const fileService = new FileService();
-        const files:File[] = await fileService.getFiles(fileSearchParams);
-        //Filter files by class scope.
-        
-        //Return the files.
-        response.status(501).send("getFiles not implemented yet.")
+        try {
+            const files:File[] = await fileService.getFiles(fileSearchParams);
+            return response.status(200).send({ message: "Successfully retrieved files.", files: files });
+        } catch (error) {
+            return response.status(500).send({ message: "File Service error.", error: error });
+        }
     }
     //Gets all files.
     getFilesForced = async (request: Request, response: Response) => {
-        response.status(501).send("getAllFiles not implemented yet.")
+        const fileSearchParams = {
+            ...(request.query.classId) ? {classId: parseInt(request.query.classId.toString())} : {},
+            ...(request.query.userId) ? {userId: parseInt(request.query.userId.toString())} : {},
+            ...(request.query.username) ? {username: request.query.username.toString()} : {},
+            ...(request.query.fileId) ? {fileId: parseInt(request.query.fileId.toString())} : {},
+            ...(request.query.title) ? {title: request.query.title.toString()} : {},
+        }
+
+        const fileService = new FileService();
+        try {
+            const files:File[] = await fileService.getFiles(fileSearchParams);
+            return response.status(200).send({ message: "Successfully retrieved files.", files: files });
+        } catch (error) {
+            return response.status(500).send({ message: "File Service error.", error: error });
+        }
     }
     
     //Deletes a file.
     deleteFile = async (request: Request, response: Response) => {
-        response.status(501).send("deleteFile not implemented yet.")
+
+        const {fileId} = request.params;
+        const {token} = request.body;
+        try {
+            //if user.id == file.authorId
+            const fileService = new FileService();
+            const userService = new UserService();
+            const user:User = await userService.getUser({ token: token.toString() });
+            const file:File = await fileService.getFiles({fileId: parseInt(fileId)})[0];
+
+            if(user.id != file.authorId){
+                return response.status(401).send({ message: "Unauthorized.", error: "User does not own file." });
+            }
+            let deletedFile:File = await fileService.deleteFile({fileId: file.id});
+
+            return response.status(200).send({ message: "Successfully deleted file.", file: deletedFile });
+        } catch (error) {
+            return response.status(500).send({ message: "File Service error.", error: error });
+        }
     }
     
     //Deletes a file.
     deleteFileForced = async(request: Request, response: Response) => {
-        response.status(501).send("deleteFileForced not implemented yet.")
+        const {fileId} = request.params;
+        const {token} = request.body;
+        try {
+            
+            const fileService = new FileService();
+            //const userService = new UserService();
+            //const user:User = await userService.getUser({ token: token.toString() });
+            const file:File = await fileService.getFiles({fileId: parseInt(fileId)})[0];
+            let deletedFile:File = await fileService.deleteFile({fileId: file.id});
+
+            return response.status(200).send({ message: "Successfully deleted file.", file: deletedFile });
+        } catch (error) {
+            return response.status(500).send({ message: "File Service error.", error: error });
+        }
     }
     
     

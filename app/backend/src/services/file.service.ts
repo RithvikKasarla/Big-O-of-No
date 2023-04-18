@@ -89,5 +89,28 @@ class FileService {
         })
         return createdFile;
     }
+
+    async deleteFile(
+        {fileId}: {fileId: number}
+    ): Promise<File>{
+        try {
+            const file = await prisma.file.findUnique({
+                where:{
+                    id: fileId
+                }
+            })
+            if(!file){
+                throw new Error(`File with id ${fileId} does not exist.`);
+            }
+        } catch (error) {
+            throw error;
+        }
+        const deletedFile = await prisma.file.delete({
+            where:{
+                id: fileId
+            }
+        })
+        return deletedFile;
+    }
 }
 export default FileService;
