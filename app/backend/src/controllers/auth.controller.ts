@@ -5,7 +5,6 @@ import { body, validationResult } from 'express-validator';
 
 import CognitoService from '../services/auth.service';
 import RDSService from '../services/rds.service';
-import { AWSError } from 'aws-sdk';
 //Publically accessible.
 //"Doorway" to getting COGNITO access.
 class AuthController {

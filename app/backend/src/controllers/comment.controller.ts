@@ -1,7 +1,20 @@
 import express, { Request, Response} from 'express';
 import AuthMiddleware from '../middleware/auth.middleware';
+import { File, Comment } from '@prisma/client';
 
+/*
+model Comment {
+  id       Int    @id @default(autoincrement())
+  content  String
+  authorId Int
+  fileId   Int
+  author   User   @relation("UserComments", fields: [authorId], references: [id])
+  file     File   @relation("FileComments", fields: [fileId], references: [id])
 
+  @@index([authorId], map: "Comment_authorId_fkey")
+  @@index([fileId], map: "Comment_fileId_fkey")
+}
+*/
 //These resources are only accessible via Cognito sign in.
 class CommentController {
     public path = '/comment';
