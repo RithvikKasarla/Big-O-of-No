@@ -40,16 +40,60 @@ class CommentService {
             throw error;
         }
     }
-    async createComment(
-        {}:{}
-    ){
+    async getComment(
+        {commentId}:{commentId: number}
+    ):Promise<Comment>{
         try {
-            
+            const comment = await prisma.comment.findUnique({
+                where: {
+                    id: commentId
+                }
+            });
+            return comment;
         } catch (error) {
             throw error;
         }
     }
-    async deleteComment(){}
-    
+    async createComment(
+        {fileId, userId, content}:{fileId: number, userId: number, content: string}
+    ):Promise<Comment>{
+        try {
+            //Create the comment.
+            //connect the comment to the file and user.
+            const comment = await prisma.comment.create({
+                data: {
+                    content: content,
+                    author: {
+                        connect: {
+                            id: userId
+                        }
+                    },
+                    file: {
+                        connect: {
+                            id: fileId
+                        }
+                    }
+                }
+            });
+            return comment;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async deleteComment(
+        {commentId}:{commentId: number}
+        ):Promise<Comment>{
+        try {
+            //Delete the comment.
+            const comment = await prisma.comment.delete({
+                where: {
+                    id: commentId
+                }
+            });
+            return comment;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 export default CommentService;

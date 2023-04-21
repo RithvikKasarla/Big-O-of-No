@@ -49,7 +49,7 @@ class CDNController{
         //Create a file.
         // Does not support query parameters.
         // POST URL/class/:classId/file
-        this.router.put('/class/:classId/file',this.validateBody('createFile'),tokenMiddleware, this.createFileChaining);
+        this.router.put('/class/:classId/file',this.validateBody('createFile'),tokenMiddleware, this.createFile);
         //Like a file.
         // Does not support query parameters.
         // POST URL/file/:fileId/like
@@ -157,11 +157,7 @@ class CDNController{
         }
     }
     
-    
-    
-    
-    
-    createFileChaining = async (request: Request, response: Response) => {
+    createFile = async (request: Request, response: Response) => {
         
         const file = request.files.file;
         if(!file){
@@ -201,6 +197,7 @@ class CDNController{
             return response.status(500).json({ message: "Error occurred.", error: err.message });
         }
     }
+
     likeFile = async (request: Request, response: Response) => {
         const {fileId} = request.params;
         const {token} = request.body;

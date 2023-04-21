@@ -31,30 +31,30 @@ class CommentController {
         this.initializeAdminRoutes();
     }
 
-    public initializeTokenRoutes() {
+    public async initializeTokenRoutes() {
         const tokenMiddleware = this.authMiddleware.verifyToken;
         //this.router.use(this.authMiddleware.verifyToken); //All functions after this require a token.
         // Put a comment
         // PUT URL/class/:classId/file/:fileId/
-        this.router.put(`/file/:fileId`, tokenMiddleware, this.createComment);
+        this.router.put(`/file/:fileId/comment`,await this.validateBody('createComment'), tokenMiddleware, this.createComment);
         // Get Comments
         // POST URL/class/:classId/file/:fileId/
-        this.router.post(`/file/:fileId`, tokenMiddleware, this.getComments);
+        this.router.post(`/file/:fileId/comment`,await this.validateBody('getComments'), tokenMiddleware, this.getComments);
         // Delete a comment
         // DELETE URL/class/:classId/file/:fileId/comment/:commentId
-        this.router.delete(`/file/:fileId/comment/:commentId`, tokenMiddleware, this.deleteComment);
+        this.router.delete(`/comment/:commentId`,await this.validateBody('deleteComment'), tokenMiddleware, this.deleteComment);
         
     }
-    public initializeAdminRoutes() {
+    public async initializeAdminRoutes() {
         const adminMiddleware = this.authMiddleware.verifyAdmin;
         //this.router.use(this.authMiddleware.verifyAdmin) //All functions after this require admin.
         // Get all comments
         // POST URL/comment/all
         //Supported Queries: ?userId, ?classId, ?fileId, ?commentId
-        this.router.post(`/comment/all`, adminMiddleware, this.getAllComments);
+        this.router.post(`/comment/all`,await this.validateBody('getAllComments'), adminMiddleware, this.getAllComments);
         // Force delete a comment
         // DELETE URL/comment/:commentId
-        this.router.delete(`/comment/:commentId`, adminMiddleware, this.forceDeleteComment);
+        this.router.delete(`/comment/all/:commentId`,await this.validateBody('forceDeleteComment'), adminMiddleware, this.forceDeleteComment);
     }
     //Given the query parameters, return a list of comments.
     //Token is required.
@@ -65,7 +65,7 @@ class CommentController {
         const {userId, classId, commentId} = request.query;
         const { token } = request.body;
         //Get userid from User Service.
-        const userService = new UserService();
+        //const userService = new UserService();
         //const user:User = await userService.getUser({token: token});
         
         let getCommentsParams = {
@@ -82,7 +82,6 @@ class CommentController {
         } catch (error) {
             return response.status(500).send(error.message);
         }
-
     }
 
     //Get ALL comments.
@@ -93,7 +92,7 @@ class CommentController {
     //Token is required.
     //Scoped to class.
     createComment = async (request: Request, response: Response) => {
-        return response.status(501).send("Not Implemented")
+        //return response.status(501).send("Not Implemented");
         const {fileId } = request.params;
         const {content} = request.body;
         const { token } = request.body;
@@ -103,8 +102,8 @@ class CommentController {
         
         let createCommentParams = {
             fileId: parseInt(fileId.toString()), //Required.
-            content: content, //Required.
-            authorId: user.id, //Required.
+            content: content.toString(), //Required.
+            userId: user.id, //Required.
         }
 
         try {
@@ -119,16 +118,53 @@ class CommentController {
     //edit a comment.
     //Token is required.
     //Scoped to comment owner.
-    editComment = async (request: Request, response: Response) => {}
+    editComment = async (request: Request, response: Response) => {
+
+    }
 
     //delete a comment.
     //Token is required.
     //Scoped to comment owner.
-    deleteComment = async (request: Request, response: Response) => {}
+    deleteComment = async (request: Request, response: Response) => {
+        const {commentId } = request.params;
+        const { token } = request.body;
+        //Get userid from User Service.
+        const userService = new UserService();
+        const user:User = await userService.getUser({token: token});
+        //Get comment from Comment Service.
+        const commentService = new CommentService();
+        const comment: Comment = await commentService.getComment({commentId: parseInt(commentId.toString())});
+        //Check if user is comment owner.
+        if (user.id !== comment.authorId) {
+            return response.status(401).send("Unauthorized");
+        }
+        //Delete comment.
+        try {
+            const commentService = new CommentService();
+            const comment: Comment = await commentService.deleteComment({commentId: parseInt(commentId.toString())});
+            return response.status(200).send(comment);
+        }
+        catch (error) {
+            return response.status(500).send(error.message);
+        }
+
+    }
 
     //force delete a comment.
     //Admin only.
-    forceDeleteComment = async (request: Request, response: Response) => {}
+    forceDeleteComment = async (request: Request, response: Response) => {
+        const {commentId } = request.params;
+        //Delete comment.
+        try {
+            const commentService = new CommentService();
+            const comment: Comment = await commentService.deleteComment({commentId: parseInt(commentId.toString())});
+            return response.status(200).send(comment);
+        }
+        catch (error) {
+            return response.status(500).send(error.message);
+        }
+        return response.status(501).send("Not Implemented");
+    }
 
     //Verify Body
     private async validateBody(type: string) {
@@ -136,6 +172,7 @@ class CommentController {
             case 'createComment':
                 return [
                     param('fileId').isInt({min: 1}),
+                    body('content').isString().notEmpty(),
                 ]
             case 'getComments':
                 return [
@@ -146,7 +183,6 @@ class CommentController {
                 ]
             case 'deleteComment':
                 return [
-                    param('fileId').isInt({min: 1}),
                     param('commentId').isInt({min: 1}),
                 ]
             case 'getAllComments':
