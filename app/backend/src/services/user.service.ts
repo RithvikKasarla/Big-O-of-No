@@ -44,7 +44,7 @@ class UserService {
             ...((userId == -1) ? {} : {id: userId}),
             ...((username == '') ? ((token == '') ?  {} : {username: await (new CognitoService()).getUsername(token)}) : {username: username}),
         }
-        console.log(`Search Query: ${JSON.stringify(searchQuery)}`);
+        //console.log(`Search Query: ${JSON.stringify(searchQuery)}`);
         const result: User[] = await prisma.user.findMany({
             where: {
                 ...((classId == -1) ? {} : {
@@ -61,7 +61,7 @@ class UserService {
                 ...((username == '') ? {} : {username: username}),
             }
         });
-        console.log(`user.service.ts: getUsers() results: ${result}`)
+       //console.log(`user.service.ts: getUsers() results: ${result}`)
         return result;
     }
     //Get User Object from parameters (username, userId)
@@ -80,10 +80,10 @@ class UserService {
                 ...((username == '') ? ((token == '') ? {} : {username: await (new CognitoService()).getUsername(token)}) : {username: username}),
                 ...((userId == -1) ? {} : {id: userId}),
             }
-            console.log(`searchQuery: ${JSON.stringify(searchQuery)}`)
+            //console.log(`searchQuery: ${JSON.stringify(searchQuery)}`)
             const results: User[] = await this.getUsers(searchQuery)
             const result: User = results[0];
-            console.log(`user.service.ts: getUser() results: ${results}`)
+            //console.log(`user.service.ts: getUser() results: ${results}`)
             return result;
         } catch (error) {
             console.log(`user.service.ts: getUser() error: ${error}`);

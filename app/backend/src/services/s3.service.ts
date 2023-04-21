@@ -26,7 +26,7 @@ class S3Service {
         let iteration = 0;
         //split the filename by '.' and get the last element
         const file_extension = filename.split('.').pop();
-        console.log(`File extension: ${file_extension}`);
+        //console.log(`File extension: ${file_extension}`);
         if(!file_extension){
             throw new Error(`Missing file extension for file ${filename}, ${file_extension}`);
         }
@@ -120,19 +120,19 @@ class S3Service {
                     Prefix: `cdn/${username}/${name}(${iteration}).${extension}`,
                     Delimiter: '/'
                 });
-                console.log(`DATA: ${JSON.stringify(data)}`);
+                //console.log(`DATA: ${JSON.stringify(data)}`);
                 while(data.Contents && data.Contents.length > 0){
                     iteration++;
-                    console.log(`File "${name}(${iteration}).${extension}" already exists, adding (${iteration}) to the end of the filename.`);
+                    //console.log(`File "${name}(${iteration}).${extension}" already exists, adding (${iteration}) to the end of the filename.`);
                     
                     data = await s3.listObjectsV2({
                         Bucket: process.env.S3_BUCKET_NAME,
                         Prefix: `cdn/${username}/${name}(${iteration}).${extension}`,
                         Delimiter: '/'
                     });
-                    console.log(`DATA: ${JSON.stringify(data)}`);
+                    //console.log(`DATA: ${JSON.stringify(data)}`);
                 }
-                console.log(`Found valid name: ${name}(${iteration}).${extension}`)
+                //console.log(`Found valid name: ${name}(${iteration}).${extension}`)
                 resolve(`${name}(${iteration}).${extension}`);
             });
         }
@@ -162,7 +162,7 @@ class S3Service {
             console.log('File Uploaded');
             //return the S3 URL of the file
             //https://BUCKET.s3.REGION.amazonaws.com/cdn/USERNAME/FILENAME
-            console.log(`Returning S3URL = https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/cdn/${username}/${filename}`);
+            //console.log(`Returning S3URL = https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/cdn/${username}/${filename}`);
             return `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/cdn/${username}/${filename}`;
         } catch (error) {
             throw error;
