@@ -87,7 +87,7 @@ class FileService {
                 }
             });
             console.log(`Found ${result.length} files matching classId = ${classId} userId =  ${userId} username = ${username} fileId = ${fileId} title = ${title}`);
-            console.log(`Result: ${JSON.stringify(result)}`);
+            //console.log(`Result: ${JSON.stringify(result)}`);
             return result;
         } catch (error) {
             throw error;
