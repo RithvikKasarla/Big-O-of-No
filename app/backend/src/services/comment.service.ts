@@ -33,6 +33,14 @@ class CommentService {
                     ...((userId == -1) ? {} : {authorId: userId}),
                     ...((classId == -1) ? {} : {file: {classId: classId}}),
                     ...((commentId == -1) ? {} : {id: commentId})
+                },
+                //Inlude the author's username.
+                include: {
+                    author: {
+                        select: {
+                            username: true
+                        }
+                    }
                 }
             });
             return comments;
@@ -47,6 +55,14 @@ class CommentService {
             const comment = await prisma.comment.findUnique({
                 where: {
                     id: commentId
+                },
+                //Inlude the author's username.
+                include: {
+                    author: {
+                        select: {
+                            username: true
+                        }
+                    }
                 }
             });
             return comment;
