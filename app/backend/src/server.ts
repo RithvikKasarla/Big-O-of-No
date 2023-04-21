@@ -11,21 +11,27 @@ import CommentController from "./controllers/comment.controller";
 import FileController from "./controllers/file.controller";
 //user controller
 import UserController from "./controllers/user.controller";
+try {
+    connect();
+} catch (error) {
+    console.log(error);
+}
 
-const app = new App({
-    port: 3001,
-    controllers: [
-        new AuthController(),
-        new ClassController(),
-        new CommentController(),
-        new FileController(),
-        new UserController(),
+function connect(){
+    const app = new App({
+        port: 3001,
+        controllers: [
+            new AuthController(),
+            new ClassController(),
+            new CommentController(),
+            new FileController(),
+            new UserController(),
 
-    ],
-    middlewares: [
-        bodyParser.json(),
-        bodyParser.urlencoded({ extended: true }),
-    ],
-});
-
-app.listen();
+        ],
+        middlewares: [
+            bodyParser.json(),
+            bodyParser.urlencoded({ extended: true }),
+        ],
+    });
+    app.listen();
+}
