@@ -37,8 +37,8 @@ const LoginPage = () => {
               "token",
               data.AuthenticationResult.AccessToken
             );
-            console.log("token", data.AuthenticationResult.AccessToken);
-            console.log("token", localStorage.getItem("token"));
+            // console.log("token", data.AuthenticationResult.AccessToken);
+            // console.log("token", localStorage.getItem("token"));
             window.location.href = "/"; // Replace "/home" with the URL of your home page
           }
         })
@@ -60,7 +60,7 @@ const LoginPage = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Success:", data);
+          console.log("Success:");
         })
         .catch((error) => {
           console.error("Error:", error);

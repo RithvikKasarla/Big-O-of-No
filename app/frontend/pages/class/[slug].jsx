@@ -156,7 +156,7 @@ export const getServerSideProps = async (context) => {
   // }[] = [];
 
   const authToken = context.req.headers.cookie?.split("authToken=")[1];
-  console.log("tplem", authToken);
+  // console.log("tplem", authToken);
   const username = context.req.headers.cookie
     ?.split("username=")[1]
     ?.split(";")[0];
@@ -175,8 +175,8 @@ export const getServerSideProps = async (context) => {
 
     // Call res.json() only once and store the result in the variable 'data'
     const data = await res.json();
-    console.log("BDSF", data);
-    console.log(data);
+    // console.log("BDSF", data);
+    // console.log(data);
     files = data.files;
   }
 

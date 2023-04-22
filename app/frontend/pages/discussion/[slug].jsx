@@ -54,16 +54,16 @@ export const getServerSideProps = async (context) => {
   // ).then((res) => res.json());
   // Return the comments as props to the component
   let commentsData = null;
-  console.log("context", context);
+  // console.log("context", context);
   const authToken = context.req.headers.cookie?.split("authToken=")[1];
   const username = context.req.headers.cookie
     ?.split("username=")[1]
     ?.split(";")[0];
-  console.log("tplem", username);
+  // console.log("tplem", username);
 
   try {
-    console.log("fetching");
-    console.log(`${config.apiUrl}/file/${context.query.id}/comment`);
+    // console.log("fetching");
+    // console.log(`${config.apiUrl}/file/${context.query.id}/comment`);
     const response = await fetch(
       `${config.apiUrl}/file/${context.query.id}/comment`,
       {
@@ -76,14 +76,14 @@ export const getServerSideProps = async (context) => {
       }
     );
     const responseData = await response.json();
-    console.log(responseData);
+    // console.log(responseData);
     commentsData = responseData;
   } catch (error) {
     console.log("error");
     console.log(error);
   }
-  console.log("dafa");
-  console.log(commentsData);
+  // console.log("dafa");
+  // console.log(commentsData);
   if (commentsData !== undefined && commentsData !== null) {
     return { props: { comments: commentsData, username: username } };
   } else {
