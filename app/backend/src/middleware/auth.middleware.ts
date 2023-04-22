@@ -83,7 +83,7 @@ class AuthMiddleware {
             }
             console.log("Got all pems")
         } catch (error) {
-            console.log("Error getting pems: ", error);
+            console.log("Error getting pems: \n", error);
         }
     }
 }
