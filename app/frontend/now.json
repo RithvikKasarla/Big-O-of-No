@@ -1,0 +1,15 @@
+{
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "server": {
+    "listen": {
+      "0.0.0.0": 80
+    }
+  }
+}
