@@ -27,7 +27,8 @@
     ".next/types/**/*.ts",
     "app/upload/FilePreview.js",
     "pages/discussion/[slug].jsx",
-    "pages/class/[slug].jsx"
+    "pages/class/[slug].jsx",
+    "app/components/sidebar.jsx"
   ],
   "exclude": ["node_modules"]
 }
