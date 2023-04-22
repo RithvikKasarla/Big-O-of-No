@@ -52,7 +52,13 @@ export default function Home() {
   );
 }
 
-function FeatureBlock({ title, description }) {
+function FeatureBlock({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <h3 className="text-lg font-bold mb-2">{title}</h3>
