@@ -7,9 +7,10 @@
       "NODE_ENV": "production"
     }
   },
-  "server": {
-    "listen": {
-      "0.0.0.0": 80
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "http://big-no-backend.northcentralus.azurecontainer.io:3001/$1"
     }
-  }
+  ]
 }

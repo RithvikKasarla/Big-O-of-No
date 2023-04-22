@@ -155,6 +155,8 @@ export const getServerSideProps = async (context) => {
   //   people_disliked: string[],
   // }[] = [];
 
+  let files = [];
+
   const authToken = context.req.headers.cookie?.split("authToken=")[1];
   // console.log("tplem", authToken);
   const username = context.req.headers.cookie
