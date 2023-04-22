@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import config from "../../config";
 import cookie from "cookie";
+import { FONT_MANIFEST } from "next/dist/shared/lib/constants";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -85,6 +86,9 @@ const LoginPage = () => {
           username,
           email,
           password,
+          birthday: "1999-01-01",
+          name: "John Doe",
+          family_name: "Doe",
         }),
       })
         .then((response) => response.json())
@@ -109,6 +113,8 @@ const LoginPage = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:");
+          setShowVerification(false);
+          setIsLogin(true);
         })
         .catch((error) => {
           console.error("Error:", error);

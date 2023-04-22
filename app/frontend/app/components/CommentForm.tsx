@@ -53,7 +53,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     // Handle the response from the server
     if (response.ok) {
       // The comment was successfully created
-      console.log("Comment created successfully");
+      // console.log("Comment created successfully");
       onCommentSubmit();
       setText("");
     } else {

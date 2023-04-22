@@ -21,7 +21,7 @@ function JoinClassesPage() {
       }),
     })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         return response.json(); // return the parsed JSON data here
       })
       .then((data) => setClasses(data))
