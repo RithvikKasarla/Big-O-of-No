@@ -14,10 +14,12 @@ interface DiscussionProps {
 
 interface Comment_ {
   id: number;
-  text: string;
-  user: string;
-  // likes: number;
-  // dislikes: number;
+  content: string;
+  authorId: number;
+  fileId: number;
+  author: {
+    username: string;
+  };
 }
 
 const Discussion: React.FC<DiscussionProps> = ({

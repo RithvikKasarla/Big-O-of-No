@@ -5,7 +5,7 @@ import CommentForm from "../components/CommentForm";
 import LikeDislike from "../components/LikeDislike";
 import config from "../../config";
 
-interface Comment {
+interface Comment_ {
   id: number;
   content: string;
   authorId: number;
@@ -16,7 +16,7 @@ interface Comment {
 }
 
 interface CommentProps {
-  Init_comments?: Comment[];
+  Init_comments?: Comment_[];
   fileId: number;
   Username: string;
 }
@@ -26,7 +26,7 @@ const Comment: React.FC<CommentProps> = ({
   fileId,
   Username,
 }) => {
-  const [comments, setComments] = useState<Comment[]>(Init_comments || []);
+  const [comments, setComments] = useState<Comment_[]>(Init_comments || []);
   const [showdefault, setShowDefault] = useState(comments.length <= 0);
   // const Username = localStorage.getItem("username");
   // Here we send comments to backend and do checks

@@ -8,39 +8,39 @@ import Page from "../../app/components/sidebar";
 import SearchBar from "../../app/components/SearchBar";
 import config from "../../config";
 
-interface File {
-  id: number;
-  s3_url: string;
-  authorId: number;
-  classId: number;
-  title: string;
-  likes: [
-    {
-      id: number;
-      username: String;
-    }
-  ];
-  dislikes: [
-    {
-      id: number;
-      username: String;
-    }
-  ];
-  author: {
-    id: number;
-    username: String;
-  };
-}
+// interface File {
+//   id: number;
+//   s3_url: string;
+//   authorId: number;
+//   classId: number;
+//   title: string;
+//   likes: [
+//     {
+//       id: number;
+//       username: String;
+//     }
+//   ];
+//   dislikes: [
+//     {
+//       id: number;
+//       username: String;
+//     }
+//   ];
+//   author: {
+//     id: number;
+//     username: String;
+//   };
+// }
 
-interface Props {
-  name: string;
-  username: string;
-  files: File[];
-}
-
-const ClassPageTemplate = ({ name, username, files }: Props) => {
+// interface Props {
+//   name: string;
+//   username: string;
+//   files: File[];
+// }
+// Props
+const ClassPageTemplate = ({ name, username, files }) => {
   const router = useRouter();
-  const [fileList, setFileList] = useState<File[]>(files);
+  const [fileList, setFileList] = useState(files); // <File[]>
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFiles, setFilteredFiles] = useState(files);
   const curLoc = router.query.slug ? router.query.slug[0] : "";
@@ -86,8 +86,8 @@ const ClassPageTemplate = ({ name, username, files }: Props) => {
   // const filteredFiles = fileList.filter((file) =>
   //   file.name.toLowerCase().startsWith(searchTerm.toLowerCase())
   // );
-
-  const onSearch = (term: string) => {
+  //: string
+  const onSearch = (term) => {
     if (term.toLowerCase().trim().startsWith("by:")) {
       const author = term.substring(3);
       const filtered = files.filter((file) =>
@@ -124,7 +124,6 @@ const ClassPageTemplate = ({ name, username, files }: Props) => {
               {filteredFiles.map((file, index) => (
                 <FileCard
                   File={file}
-                  key={`${file.url}_${index}`}
                   Username={username}
                   ListOfFiles={getListOfFiles}
                 />
@@ -139,29 +138,22 @@ const ClassPageTemplate = ({ name, username, files }: Props) => {
 
 export default ClassPageTemplate;
 
-import { GetServerSideProps } from "next";
-import cookie from "cookie";
-import Head from "next/head";
-
-interface Props {
-  name: string;
-  username: string;
-  files: File[];
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
+// interface Props {
+//   name: string;
+//   username: string;
+//   files: File[];
+// }
+// : GetServerSideProps<Props>
+export const getServerSideProps = async (context) => {
   const { slug, name } = context.query;
-  console.log("---------------------------------");
   const key = slug;
-  let files: {
-    name: string;
-    author: string;
-    url: string;
-    people_liked: string[];
-    people_disliked: string[];
-  }[] = [];
+  // let files: {
+  //   name: string,
+  //   author: string,
+  //   url: string,
+  //   people_liked: string[],
+  //   people_disliked: string[],
+  // }[] = [];
 
   const authToken = context.req.headers.cookie?.split("authToken=")[1];
   console.log("tplem", authToken);
@@ -188,11 +180,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     files = data.files;
   }
 
-  return {
-    props: {
-      name,
-      username,
-      files,
-    },
-  };
+  return Promise.resolve({ props: { name, username, files } });
+
+  // return {
+  //   props: {
+  //     name,
+  //     username,
+  //     files,
+  //   },
+  // };
 };

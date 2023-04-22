@@ -7,29 +7,26 @@ import Page from "../../app/components/sidebar";
 import { compileFunction } from "vm";
 import config from "../../config";
 
-interface DiscussionPageProps {
-  comments: Comment_[];
-  username: string;
-}
+// // interface DiscussionPageProps {
+// //   comments: Comment_[];
+// //   username: string;
+// // }
 
-interface Comment_ {
-  id: number;
-  content: string;
-  authorId: number;
-  fileId: number;
-  author: {
-    username: string;
-  };
-}
+// // interface Comment_ {
+// //   id: number;
+// //   content: string;
+// //   authorId: number;
+// //   fileId: number;
+// //   author: {
+// //     username: string;
+// //   };
+// }
 
-const DiscussionPage: React.FC<DiscussionPageProps> = (comments) => {
+//: React.FC<DiscussionPageProps>
+const DiscussionPage = (comments) => {
   const router = useRouter();
   const { slug } = router.query;
 
-  // console.log("sfasdf");
-  // console.log(router.query.id);
-
-  // console.log(comments);
   return (
     <>
       <Header />
@@ -49,8 +46,8 @@ const DiscussionPage: React.FC<DiscussionPageProps> = (comments) => {
 };
 
 export default DiscussionPage;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
+//GetServerSideProps
+export const getServerSideProps = async (context) => {
   // Fetch the comments for this discussion from your backend
   // const comments: Comment[] = await fetch(
   //   `https://yourapi.com/discussions/${params.slug}/comments`
