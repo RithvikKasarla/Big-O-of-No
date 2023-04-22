@@ -4,15 +4,15 @@ import Link from "next/link";
 import config from "../../config";
 import { HeaderContext } from "../HeaderContext";
 
-interface Classes_ {
-  id: number;
-  name: string;
-  description: string;
-}
+// interface Classes_ {
+//   id: number;
+//   name: string;
+//   description: string;
+// }
 
 const Page = () => {
-  const [classes, setClasses] = useState<Classes_[]>([]);
-  const [classesUpdated, setClassesUpdated] = useState<boolean>(false);
+  const [classes, setClasses] = useState([]); //<Classes_[]>
+  const [classesUpdated, setClassesUpdated] = useState(false); //<boolean>
   const { headerData } = useContext(HeaderContext);
 
   const fetchClasses = async () => {
@@ -36,7 +36,7 @@ const Page = () => {
     }
   }, [headerData]);
 
-  async function leaveClass(id: any) {
+  async function leaveClass(id) {
     const res = await fetch(`${config.apiUrl}/class/${id}/leave`, {
       method: "PUT",
       headers: {
@@ -55,7 +55,6 @@ const Page = () => {
 
   return (
     <div className="flex h-screen " style={{ height: "100%" }}>
-      {/* Sidebar */}
       <div className="flex flex-col w-64 bg-gray-800">
         <div className="flex items-center justify-center h-14 text-white text-lg font-bold">
           Topics
