@@ -65,7 +65,7 @@ function JoinClassesPage() {
   //   });
   // }
 
-  function handleJoinClasses(e) {
+  function handleJoinClasses(e: any) {
     e.preventDefault();
     const promises = selectedClasses.map((classId) => {
       return fetch(`${config.apiUrl}/class/${classId}/join`, {
