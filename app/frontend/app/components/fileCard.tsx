@@ -1,11 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import LikeDislike from "./LikeDislike";
-import DocViewer, {
-  DocViewerRenderers,
-  IHeaderOverride,
-  PDFRenderer,
-} from "@cyntler/react-doc-viewer";
 import config from "../../config";
 
 interface File_ {
@@ -33,12 +28,11 @@ interface File_ {
 }
 interface FileCardProps {
   File: File_;
-  Key: string;
   Username: string;
   ListOfFiles: () => void;
 }
 
-function FileCard({ File, Key, Username, ListOfFiles }: FileCardProps) {
+function FileCard({ File, Username, ListOfFiles }: FileCardProps) {
   const deleteFile = () => {
     fetch(`http://localhost:3001/file/${File.id}`, {
       method: "DELETE",
@@ -76,15 +70,6 @@ function FileCard({ File, Key, Username, ListOfFiles }: FileCardProps) {
       ) : isVideo ? (
         <video src={File.s3_url} controls height={200} />
       ) : (
-        // <DocViewer
-        //   style={{ width: 200, height: 200 }}
-        //   // pluginRenderers={DocViewerRenderers}
-        //   // pluginRenderers={[MyCustomPNGRenderer]}
-        //   documents={[{ uri: File.s3_url }]}
-        //   config={{
-        //     header: { disableHeader: true },
-        //   }}
-        // />
         <iframe src={File.s3_url} width="100%" height="200"></iframe>
       )}
 
@@ -127,15 +112,4 @@ function FileCard({ File, Key, Username, ListOfFiles }: FileCardProps) {
   );
 }
 
-const MyCustomPNGRenderer: DocRenderer = ({
-  mainState: { currentDocument },
-}) => {
-  if (!currentDocument) return null;
-
-  return (
-    <div id="my-png-renderer">
-      <img id="png-img" src={currentDocument.fileData as string} />
-    </div>
-  );
-};
 export default FileCard;

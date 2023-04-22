@@ -25,7 +25,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/upload/FilePreview.js"
+    "app/upload/FilePreview.js",
+    "pages/discussion/[slug].jsx",
+    "pages/class/[slug].jsx"
   ],
   "exclude": ["node_modules"]
 }
