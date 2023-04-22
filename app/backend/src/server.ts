@@ -11,7 +11,14 @@ import CommentController from "./controllers/comment.controller";
 import FileController from "./controllers/file.controller";
 //user controller
 import UserController from "./controllers/user.controller";
+//import .env
+import dotenv from "dotenv";
+dotenv.config();
+
 try {
+    console.log('printing env variables');
+    console.log(`AWS_REGION: ${process.env.AWS_REGION}`);
+    console.log(`S3_BUCKET_NAME: ${process.env.S3_BUCKET_NAME}`);
     connect();
 } catch (error) {
     console.log(error);
