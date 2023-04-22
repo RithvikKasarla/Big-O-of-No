@@ -6,40 +6,83 @@ import { useRouter } from "next/router";
 import Header from "../../app/components/Header";
 import Page from "../../app/components/sidebar";
 import SearchBar from "../../app/components/SearchBar";
-import { constants } from "buffer";
+import config from "../../config";
 
 interface File {
-  name: string;
-  author: string;
-  url: string;
-  likes: number;
   id: number;
+  s3_url: string;
+  authorId: number;
+  classId: number;
+  title: string;
+  likes: [
+    {
+      id: number;
+      username: String;
+    }
+  ];
+  dislikes: [
+    {
+      id: number;
+      username: String;
+    }
+  ];
+  author: {
+    id: number;
+    username: String;
+  };
 }
 
 interface Props {
   name: string;
+  username: string;
   files: File[];
 }
 
-const ClassPageTemplate = ({ name, files }: Props) => {
+const ClassPageTemplate = ({ name, username, files }: Props) => {
   const router = useRouter();
   const [fileList, setFileList] = useState<File[]>(files);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFiles, setFilteredFiles] = useState(files);
+  const curLoc = router.query.slug ? router.query.slug[0] : "";
 
+  useEffect(() => {
+    setFileList(files);
+  }, [files]);
+
+  // const getListOfFiles = async () => {
+  //   const curLoc = router.query.slug ? router.query.slug[0] : "";
+  //   console.log(router.query);
+
+  //   const res = await fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`);
+  //   const data = await res.json();
+  //   setFileList(data);
+  // };
   useEffect(() => {
     setFileList(files);
   }, [files]);
 
   const getListOfFiles = async () => {
     const curLoc = router.query.slug ? router.query.slug[0] : "";
-    console.log(router.query);
 
-    const res = await fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`);
+    const res = await fetch(`${config.apiUrl}/class/${curLoc}/file`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: localStorage.getItem("token"),
+      }),
+    });
+
     const data = await res.json();
-    setFileList(data);
+    setFileList(data.files);
+    setFilteredFiles(data.files); // Update the filtered files as well
   };
 
+  // Fetch the list of files when the component mounts or the route parameter changes
+  useEffect(() => {
+    getListOfFiles();
+  }, [router.query.slug]);
   // const filteredFiles = fileList.filter((file) =>
   //   file.name.toLowerCase().startsWith(searchTerm.toLowerCase())
   // );
@@ -48,15 +91,13 @@ const ClassPageTemplate = ({ name, files }: Props) => {
     if (term.toLowerCase().trim().startsWith("by:")) {
       const author = term.substring(3);
       const filtered = files.filter((file) =>
-        file.author.toLowerCase().startsWith(author.toLowerCase())
+        file.author.username.toLowerCase().startsWith(author.toLowerCase())
       );
       setFilteredFiles(filtered);
     } else {
       setFilteredFiles(
-        files.filter(
-          (file) =>
-            file.name.toLowerCase().includes(term.toLowerCase()) ||
-            file.author.toLowerCase().includes(term.toLowerCase())
+        files.filter((file) =>
+          file.title.toLowerCase().includes(term.toLowerCase())
         )
       );
     }
@@ -65,33 +106,30 @@ const ClassPageTemplate = ({ name, files }: Props) => {
   return (
     <>
       <Header />
-      <div>
-        <div className="flex h-screen">
-          <Page />
-          <div className="flex ...">
-            <span className="pl-5 pt-3">
-              <p className="font-bold text-2xl">
-                {name.toUpperCase()} Main Page
-              </p>
-              <hr className="mt-3 w-48 h-1 bg-gray-300 border-0 dark:bg-gray-600 rounded"></hr>
-              <Upload />
-              <div className="pl-5 pt-3">
-                <div className="grid grid-cols-4 gap-5">
-                  {filteredFiles.map((file, index) => (
-                    <FileCard
-                      key={`${file.url}_${index}`}
-                      FileName={file.name}
-                      Author={file.author}
-                      Url={file.url}
-                      likes={file.likes}
-                      ListOfFiles={getListOfFiles}
-                      id={file.id}
-                    />
-                  ))}
-                </div>
-              </div>
-            </span>
+      <div className="flex" style={{ height: "calc(101vh - 4rem)" }}>
+        <Page />
+        <div className="flex flex-col" style={{ height: "100%" }}>
+          <div className="flex items-center justify-between px-5 py-3">
+            <p className="font-bold text-2xl">
+              <u>{name.toUpperCase()} Main Page</u>
+            </p>
+            <Upload classID={curLoc} getListOfFiles={getListOfFiles} />
+          </div>
+          <div className="pb-1">
             <SearchBar onSearch={onSearch} />
+          </div>
+          <div className="overflow-y-auto">
+            {/* <div className="grid grid-cols-3 gap-5 p-5"> */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-5">
+              {filteredFiles.map((file, index) => (
+                <FileCard
+                  File={file}
+                  key={`${file.url}_${index}`}
+                  Username={username}
+                  ListOfFiles={getListOfFiles}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -103,45 +141,57 @@ export default ClassPageTemplate;
 
 import { GetServerSideProps } from "next";
 import cookie from "cookie";
+import Head from "next/head";
 
 interface Props {
   name: string;
-  files: {
-    name: string;
-    author: string;
-    url: string;
-    likes: number;
-    dislike: number;
-  }[];
+  username: string;
+  files: File[];
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const { slug } = context.query;
-  const name = slug.toLowerCase();
+  const { slug, name } = context.query;
+  console.log("---------------------------------");
   const key = slug;
   let files: {
     name: string;
     author: string;
     url: string;
-    likes: number;
-    dislike: number;
+    people_liked: string[];
+    people_disliked: string[];
   }[] = [];
 
-  const authToken = context.req.headers.cookie?.split("=")[1];
+  const authToken = context.req.headers.cookie?.split("authToken=")[1];
+  console.log("tplem", authToken);
+  const username = context.req.headers.cookie
+    ?.split("username=")[1]
+    ?.split(";")[0];
+  // console.log(username);
+  // console.log(authToken);
+  if (authToken && username) {
+    const res = await fetch(`${config.apiUrl}/class/${slug}/file`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: authToken,
+      }),
+    });
 
-  if (authToken) {
-    files = [
-      { name: "TEST1", author: "TEST1", url: "TEST1", likes: 0, dislike: 0 },
-      { name: "TEST", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
-      { name: "TEST2", author: "TEST2", url: "TEST2", likes: 0, dislike: 0 },
-    ];
+    // Call res.json() only once and store the result in the variable 'data'
+    const data = await res.json();
+    console.log("BDSF", data);
+    console.log(data);
+    files = data.files;
   }
 
   return {
     props: {
       name,
+      username,
       files,
     },
   };

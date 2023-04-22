@@ -8,28 +8,46 @@ const Page = () => {
   const [classesUpdated, setClassesUpdated] = useState(false);
   const { headerData } = useContext(HeaderContext);
 
+  const fetchClasses = async () => {
+    const res = await fetch(`${config.apiUrl}/class`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        token: localStorage.getItem("token"),
+      }),
+    });
+    const data = await res.json();
+    setClasses(data);
+  };
+
   useEffect(() => {
-    console.log("1st EFFECT ALLCED");
-    const fetchClasses = async () => {
-      const res = await fetch(`${config.apiUrl}/class`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          token: localStorage.getItem("token"),
-        }),
-      });
-      const data = await res.json();
-      setClasses(data);
-    };
-    fetchClasses();
+    if (localStorage.getItem("token") != null) {
+      fetchClasses();
+    }
   }, [headerData]);
+
+  async function leaveClass(id: any) {
+    const res = await fetch(`${config.apiUrl}/class/${id}/leave`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        token: localStorage.getItem("token"),
+      }),
+    });
+    const data = await res.json();
+    if (data.message) {
+      fetchClasses();
+    }
+  }
 
   // useEffect(() => {
   //   console.log("useEffect hook called");
-
   //   const localStorageUpdated = () => {
   //     console.log("localStorageUpdated called");
   //     if (localStorage.getItem("classes-updated")) {
@@ -45,20 +63,46 @@ const Page = () => {
   // }, []);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen " style={{ height: "100%" }}>
       {/* Sidebar */}
       <div className="flex flex-col w-64 bg-gray-800">
         <div className="flex items-center justify-center h-14 text-white text-lg font-bold">
           Topics
         </div>
-        <ul className="flex flex-col flex-1 overflow-y-auto">
+        <ul
+          className="flex flex-col flex-1 overflow-y-auto"
+          style={{ height: "100%" }}
+        >
           {Array.isArray(classes) &&
             classes.map((c) => (
-              <Link key={c.id} href={`/class/${c.name}`}>
-                <li className="px-8 py-2 text-gray-300 hover:text-white cursor-pointer">
+              <li
+                className="flex px-8 py-2 text-gray-300 hover:text-white cursor-pointer"
+                key={c.id}
+              >
+                <button
+                  className="ml-2 text-red-500 hover:text-red-700"
+                  onClick={() => leaveClass(c.id)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M11.414 10l4.293-4.293a1 1 0 1 0-1.414-1.414L10 8.586l-4.293-4.293a1 1 0 1 0-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 1 0 1.414 1.414L10 11.414l4.293 4.293a1 1 0 1 0 1.414-1.414L11.414 10z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <a>&emsp;</a>
+                <Link
+                  href={`/class/${c.id}?name=${encodeURIComponent(c.name)}`}
+                >
                   {c.name}
-                </li>
-              </Link>
+                </Link>
+              </li>
             ))}
         </ul>
       </div>

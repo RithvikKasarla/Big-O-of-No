@@ -31,7 +31,7 @@ class SearchBar extends React.Component<SearchBarProps, SearchBarState> {
 
   render() {
     return (
-      <div className="mx-auto max-w-md">
+      <div className="mx-auto w-full max-w-screen-xl">
         <form className="flex items-center" onSubmit={this.onFormSubmit}>
           <input
             type="text"
