@@ -29,7 +29,7 @@ class RDSService {
                     username: username,
                 }
             });
-            console.log(data);
+            //console.log(data);
             return true;
         } catch (error) {
             console.log(error);
@@ -45,7 +45,7 @@ class RDSService {
                     description: description,
                 }
             });
-            console.log(data);
+            //console.log(data);
             return true; //TODO: switch to json return
         } catch (error) {
             console.log(error);
@@ -56,7 +56,7 @@ class RDSService {
     public async getAllClasses(): Promise<any> {
         try {
             const data = await prisma.class.findMany({});
-            console.log(data);
+            //console.log(data);
             return data; //TODO: switch to json return
         }catch (error) {
             console.log(error);
