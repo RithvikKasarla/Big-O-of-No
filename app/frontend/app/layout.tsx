@@ -32,7 +32,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [headerData, setHeaderData] = useState(false);
+  const [headerData, setHeaderData] = useState<boolean>(false);
 
   return (
     <html>

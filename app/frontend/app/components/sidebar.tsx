@@ -3,9 +3,16 @@ import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import config from "../../config";
 import { HeaderContext } from "../HeaderContext";
+
+interface Classes_ {
+  id: number;
+  name: string;
+  description: string;
+}
+
 const Page = () => {
-  const [classes, setClasses] = useState([]);
-  const [classesUpdated, setClassesUpdated] = useState(false);
+  const [classes, setClasses] = useState<Classes_[]>([]);
+  const [classesUpdated, setClassesUpdated] = useState<boolean>(false);
   const { headerData } = useContext(HeaderContext);
 
   const fetchClasses = async () => {
@@ -45,22 +52,6 @@ const Page = () => {
       fetchClasses();
     }
   }
-
-  // useEffect(() => {
-  //   console.log("useEffect hook called");
-  //   const localStorageUpdated = () => {
-  //     console.log("localStorageUpdated called");
-  //     if (localStorage.getItem("classes-updated")) {
-  //       setClassesUpdated(true);
-  //       localStorage.removeItem("classes-updated");
-  //       console.log("classes-updated flag lowered");
-  //     }
-  //   };
-  //   window.addEventListener("storage", localStorageUpdated);
-  //   return () => {
-  //     window.removeEventListener("storage", localStorageUpdated);
-  //   };
-  // }, []);
 
   return (
     <div className="flex h-screen " style={{ height: "100%" }}>
