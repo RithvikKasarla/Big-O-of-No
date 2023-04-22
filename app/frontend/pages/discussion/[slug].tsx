@@ -8,11 +8,11 @@ import { compileFunction } from "vm";
 import config from "../../config";
 
 interface DiscussionPageProps {
-  comments: Comment[];
+  comments: Comment_[];
   username: string;
 }
 
-interface Comment {
+interface Comment_ {
   id: number;
   content: string;
   authorId: number;
