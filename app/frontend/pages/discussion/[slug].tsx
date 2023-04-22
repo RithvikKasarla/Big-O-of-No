@@ -5,30 +5,43 @@ import { GetServerSideProps } from "next";
 import Header from "../../app/components/Header";
 import Page from "../../app/components/sidebar";
 import { compileFunction } from "vm";
+import config from "../../config";
 
 interface DiscussionPageProps {
   comments: Comment[];
+  username: string;
 }
 
 interface Comment {
   id: number;
-  text: string;
-  user: string;
+  content: string;
+  authorId: number;
+  fileId: number;
+  author: {
+    username: string;
+  };
 }
 
-const DiscussionPage: React.FC<DiscussionPageProps> = ({ comments }) => {
+const DiscussionPage: React.FC<DiscussionPageProps> = (comments) => {
   const router = useRouter();
   const { slug } = router.query;
-  console.log("sfasdf");
-  console.log(slug);
-  console.log(comments);
+
+  // console.log("sfasdf");
+  // console.log(router.query.id);
+
+  // console.log(comments);
   return (
     <>
       <Header />
-      <div className="flex h-screen">
+      <div className="flex" style={{ height: "calc(101vh - 4rem)" }}>
         <Page />
         <div className="flex ...">
-          <Discussion discussionSlug={slug} comments={comments} />
+          <Discussion
+            discussionSlug={slug}
+            comments={comments.comments}
+            fileId={router.query.id}
+            Username={comments.username}
+          />
         </div>
       </div>
     </>
@@ -37,81 +50,45 @@ const DiscussionPage: React.FC<DiscussionPageProps> = ({ comments }) => {
 
 export default DiscussionPage;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   // Fetch the comments for this discussion from your backend
   // const comments: Comment[] = await fetch(
   //   `https://yourapi.com/discussions/${params.slug}/comments`
   // ).then((res) => res.json());
-  const commentsData = {
-    "1": [
-      {
-        id: 1,
-        author: "Alice",
-        content: "This is a comment",
-        likes: 0,
-        dislikes: 0,
-      },
-      {
-        id: 2,
-        author: "Bob",
-        content: "This is another comment",
-        likes: 0,
-        dislikes: 0,
-      },
-    ],
-    "2": [
-      {
-        id: 1,
-        author: "Charlie",
-        content: "I have a question",
-        likes: 0,
-        dislikes: 0,
-      },
-      {
-        id: 2,
-        author: "Dave",
-        content: "I like this app",
-        likes: 0,
-        dislikes: 0,
-      },
-      {
-        id: 3,
-        author: "Eve",
-        content: "This is a great resource, thank you!",
-        likes: 0,
-        dislikes: 0,
-      },
-    ],
-    "3": [
-      {
-        id: 1,
-        author: "Frank",
-        content: "Can anyone help me with this problem?",
-        likes: 0,
-        dislikes: 0,
-      },
-      {
-        id: 2,
-        author: "Grace",
-        content: "I found a bug in the app",
-        likes: 0,
-        dislikes: 0,
-      },
-      {
-        id: 3,
-        author: "Heidi",
-        content: "I have a suggestion for a new feature",
-        likes: 0,
-        dislikes: 0,
-      },
-    ],
-  };
-  console.log(commentsData[params.slug]);
   // Return the comments as props to the component
-  if (params) {
-    const comments = commentsData[params.slug] || [];
-    console.log(comments);
-    return { props: { comments } };
+  let commentsData = null;
+  console.log("context", context);
+  const authToken = context.req.headers.cookie?.split("authToken=")[1];
+  const username = context.req.headers.cookie
+    ?.split("username=")[1]
+    ?.split(";")[0];
+  console.log("tplem", username);
+
+  try {
+    console.log("fetching");
+    console.log(`${config.apiUrl}/file/${context.query.id}/comment`);
+    const response = await fetch(
+      `${config.apiUrl}/file/${context.query.id}/comment`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ token: authToken }),
+      }
+    );
+    const responseData = await response.json();
+    console.log(responseData);
+    commentsData = responseData;
+  } catch (error) {
+    console.log("error");
+    console.log(error);
+  }
+  console.log("dafa");
+  console.log(commentsData);
+  if (commentsData !== undefined && commentsData !== null) {
+    return { props: { comments: commentsData, username: username } };
   } else {
     return { props: { comments: [] } };
   }

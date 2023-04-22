@@ -1,5 +1,5 @@
 const config = {
-  apiUrl: "http://localhost:3001",
+  apiUrl: "http://big-no-backend.northcentralus.azurecontainer.io:3001",
 };
 
 export default config;

@@ -45,11 +45,18 @@ const LoginPage = () => {
                 data.AuthenticationResult.AccessToken
               );
               localStorage.setItem("username", username);
-
               const maxAge = 3600;
               const expires = new Date(
                 Date.now() + maxAge * 1000
               ).toUTCString();
+              const usernameCookie = `username=${username}; expires=${expires}; path=/`;
+
+              document.cookie = usernameCookie;
+
+              // const maxAge = 3600;
+              // const expires = new Date(
+              //   Date.now() + maxAge * 1000
+              // ).toUTCString();
               const cookieValue = `authToken=${data.AuthenticationResult.AccessToken}; expires=${expires}; path=/`;
 
               document.cookie = cookieValue;

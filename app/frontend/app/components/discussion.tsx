@@ -1,27 +1,32 @@
 import React, { useEffect, useState } from "react";
-// import Comment from "../components/Comment";
+import Comment from "./Comment";
 import CommentForm from "../components/CommentForm";
 import LikeDislike from "../components/LikeDislike";
+import config from "../../config";
 // import { Comment as CommentType } from "../types/comment";
 
 interface DiscussionProps {
   discussionSlug: string;
-  comments: Comment[];
+  comments: Comment_[];
+  fileId: number;
+  Username: string;
 }
 
-interface Comment {
+interface Comment_ {
   id: number;
   text: string;
   user: string;
-  likes: number;
-  dislikes: number;
+  // likes: number;
+  // dislikes: number;
 }
 
 const Discussion: React.FC<DiscussionProps> = ({
   discussionSlug,
   comments,
+  fileId,
+  Username,
 }) => {
-  const [commentList, setCommentList] = useState<Comment[]>(comments);
+  const [commentList, setCommentList] = useState<Comment_[]>(comments);
   const [showdefault, setShowDefault] = useState(true);
 
   useEffect(() => {
@@ -32,9 +37,7 @@ const Discussion: React.FC<DiscussionProps> = ({
     }
   }, [comments]);
 
-  const handleCommentSubmit = (newComment: Comment) => {
-    setCommentList([...commentList, newComment]);
-  };
+  // newComment: Comment
 
   return (
     <div className="flex ...">
@@ -50,29 +53,15 @@ const Discussion: React.FC<DiscussionProps> = ({
       </div>
       <div className="flex w-full bg-gray-100">
         <div className="flex flex-row items-center">
-          <img src="/icons/arrow.png" alt="" className="w-8 h-8" />
+          {/* <img src={arrow.src} alt="" className="w-8 h-8" /> */}
         </div>
         <div className="px-5 pt-3 flex flex-col w-full space-y-1">
           <p className="text-2xl font-bold">Comments:</p>
-          <ul>
-            {commentList &&
-              commentList.map((comment) => (
-                <li
-                  key={comment.id}
-                  className="bg-gray-200 my-3 rounded p-2 m-2 w-full"
-                >
-                  {comment.content}
-                  <div className="text-xs text-stone-500 flex justify-between">
-                    {comment.author}
-                    <LikeDislike
-                      likes={comment.likes}
-                      dislikes={comment.dislikes}
-                    />
-                  </div>
-                </li>
-              ))}
-          </ul>
-          <CommentForm onCommentSubmit={handleCommentSubmit} />
+          <Comment
+            Init_comments={comments}
+            fileId={fileId}
+            Username={Username}
+          />
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@ function Header() {
 
   if (!token) {
     return (
-      <header className="p-5 bg-blue-500 flex justify-between">
+      <header className="p-3 bg-blue-500 flex justify-between">
         <div>
           <Link
             href="/"
@@ -42,7 +42,7 @@ function Header() {
     );
   } else {
     return (
-      <header className="p-5 bg-blue-500 flex justify-between">
+      <header className="p-3 bg-blue-500 flex justify-between">
         <div>
           <Link
             href="/"
