@@ -40,7 +40,10 @@ export default function RootLayout({
       <body>
         <HeaderContext.Provider value={{ headerData, setHeaderData }}>
           <Header />
-          <div className="flex" style={{ height: "calc(101vh - 4rem)" }}>
+          <div
+            className="flex"
+            style={{ height: "calc(101vh - 4rem)", overflowY: "hidden" }}
+          >
             <Page />
             {children}
           </div>

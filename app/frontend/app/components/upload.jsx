@@ -6,11 +6,11 @@ function Upload({ classID, getListOfFiles }) {
   const [file, setFile] = useState(null);
   const handleChange = (file) => {
     setFile(file);
-    console.log(file);
+    // console.log(file);
   };
 
   const handleFileUpload = async (file) => {
-    console.log(file);
+    // console.log(file);
     const formData = new FormData();
     formData.append("file", file);
     formData.append("token", localStorage.getItem("token"));
@@ -22,7 +22,7 @@ function Upload({ classID, getListOfFiles }) {
         body: formData,
       });
       const responseData = await response.json();
-      console.log(responseData);
+      // console.log(responseData);
       getListOfFiles();
       setFile(null);
     } catch (error) {
