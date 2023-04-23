@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="w-full">
       <Head>
-        <title>ShareNote - The Ultimate Note Sharing Platform</title>
+        <title>  ShareNote - The Ultimate Note Sharing Platform</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

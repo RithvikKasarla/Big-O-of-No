@@ -35,7 +35,7 @@ function Header() {
             href="/signup"
             className="bg-white text-blue-500 rounded-lg px-3 py-1"
           >
-            Signin
+            Sign In
           </Link>
         </div>
       </header>
@@ -68,7 +68,7 @@ function Header() {
             className="bg-white text-blue-500 rounded-lg px-3 py-1"
             onClick={handleSignOut}
           >
-            Signout
+            Sign Out
           </button>
         </div>
       </header>
