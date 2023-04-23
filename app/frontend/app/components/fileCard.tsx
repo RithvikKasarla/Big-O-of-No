@@ -34,7 +34,7 @@ interface FileCardProps {
 
 function FileCard({ File, Username, ListOfFiles }: FileCardProps) {
   const deleteFile = () => {
-    fetch(`http://localhost:3001/file/${File.id}`, {
+    fetch(`${config.apiUrl}/file/${File.id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

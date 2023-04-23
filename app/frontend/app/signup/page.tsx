@@ -94,11 +94,11 @@ const LoginPage = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:");
+          setShowVerification(true);
         })
         .catch((error) => {
           console.error("Error:", error);
         });
-      setShowVerification(true);
     } else {
       fetch(`${config.apiUrl}/auth/verify`, {
         method: "POST",
