@@ -13,7 +13,8 @@ const LoginPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-
+  const [error, setError] = useState("");
+  const [loginError, setLoginError] = useState("");
   useEffect(() => {
     // Set isMounted to true after the component has been mounted on the client
     setIsMounted(true);
@@ -40,7 +41,13 @@ const LoginPage = () => {
           .then((response) => response.json())
           .then((data) => {
             // console.log("Success:", data);
-            if (data) {
+            console.log("Success:", data);
+            if (
+              data.message === "Failed, likely invalid input." ||
+              data.message === "Incorrect username or password."
+            ) {
+              setLoginError("Incorrect username or password.");
+            } else {
               localStorage.setItem(
                 "token",
                 data.AuthenticationResult.AccessToken
@@ -94,7 +101,26 @@ const LoginPage = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:");
-          setShowVerification(true);
+          console.log(data);
+          if (data.message != "Success") {
+            let errorMsg = "Signup request failed";
+
+            const firstError = data.errors[0];
+            console.log("forst", firstError);
+            if (firstError.param === "email") {
+              errorMsg = "Invalid email address";
+            } else if (firstError.param === "username") {
+              errorMsg = "Invalid username";
+            } else if (firstError.param === "password") {
+              errorMsg = "Invalid password";
+            } else {
+              errorMsg = "Signup request failed";
+            }
+
+            setError(errorMsg);
+          } else {
+            setShowVerification(true);
+          }
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -209,6 +235,19 @@ const LoginPage = () => {
                   required
                 />
               </div>
+            </>
+          )}
+          {!isLogin && !showVerification && (
+            <>
+              <p>
+                Passwords should contain at least one character and one number.
+              </p>
+              <p className="text-red-500">{error}</p>
+            </>
+          )}
+          {isLogin && !showVerification && (
+            <>
+              <p className="text-red-500">{loginError}</p>
             </>
           )}
           <button
