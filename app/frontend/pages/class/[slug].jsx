@@ -43,7 +43,9 @@ const ClassPageTemplate = ({ name, username, files }) => {
   const [fileList, setFileList] = useState(files); // <File[]>
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFiles, setFilteredFiles] = useState(files);
-  const curLoc = router.query.slug ? router.query.slug[0] : "";
+  const curLoc = typeof window !== "undefined" ? window.location.pathname : "";
+  const classIdMatch = curLoc.match(/\/(\d+)\/?$/);
+  const classId = classIdMatch ? classIdMatch[1] : "";
 
   useEffect(() => {
     setFileList(files);
@@ -54,7 +56,7 @@ const ClassPageTemplate = ({ name, username, files }) => {
   //   console.log(router.query);
 
   //   const res = await fetch(`http://localhost:3001/api/getAllFiles/${curLoc}`);
-  //   const data = await res.json();
+  //   const data = await res.json();image.png
   //   setFileList(data);
   // };
   useEffect(() => {
@@ -62,9 +64,11 @@ const ClassPageTemplate = ({ name, username, files }) => {
   }, [files]);
 
   const getListOfFiles = async () => {
-    const curLoc = router.query.slug ? router.query.slug[0] : "";
+    const curLoc = typeof window !== "undefined" ? window.location.pathname : "";
+    const classIdMatch = curLoc.match(/\/(\d+)\/?$/);
+    const classId = classIdMatch ? classIdMatch[1] : "";
 
-    const res = await fetch(`${config.apiUrl}/class/${curLoc}/file`, {
+    const res = await fetch(`${config.apiUrl}/class/${classId}/file`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +117,7 @@ const ClassPageTemplate = ({ name, username, files }) => {
             <p className="font-bold text-2xl">
               <u>{name.toUpperCase()} Main Page</u>
             </p>
-            <Upload classID={curLoc} getListOfFiles={getListOfFiles} />
+            <Upload classID={classId} getListOfFiles={getListOfFiles} />
           </div>
           <div className="pb-1">
             <SearchBar onSearch={onSearch} />
