@@ -41,13 +41,19 @@ class AuthController {
         userAttr.push({Name: 'email', Value: email});
         userAttr.push({Name: 'birthdate', Value: birthday});
         //Cognito
-        const cognito = new CognitoService();
-        //TODO: Catch User already exists.
-        let cognito_success = await cognito.signUp(username, password, userAttr);
-        if(!cognito_success){
-            return res.status(500).json({message: 'Error with Cognito service.'}).end();
+        try {
+            const cognito = new CognitoService();
+            //TODO: Catch User already exists.
+            const cognito_success = await cognito.signUp(username, password, userAttr);
+            if(cognito_success){
+                return res.status(200).json({message: 'Success'}).end();
+            }else{
+                return res.status(500).json({message: 'Unhandled with Cognito service.'}).end();
+            }
+        } catch (error) {
+            return res.status(400).json({message: 'Error with Cognito service.',error: error.message}).end();
         }
-        return res.status(200).json({message: 'Success'}).end();
+
     }
     
     //Sign in a user, returns access token.
@@ -66,7 +72,7 @@ class AuthController {
             return res.status(200).json(data).end();
         }).catch((err) => {
             console.log("COG ERROR: " + JSON.stringify(err))
-            return res.status(500).json({message: 'Unhandled error.'}).end();
+            return res.status(400).json({message: 'Unhandled error.', error: err.message}).end();
         });
     }
     
@@ -84,10 +90,14 @@ class AuthController {
         if(!cognito_succes){
             return res.status(500).json({message: 'Error with Cognito service.'}).end();
         }
-        const rds = new RDSService();
-        let rds_success = await rds.createUser(username);
-        if(!rds_success){
-            return res.status(500).json({message: 'Error with RDS servic.'}).end();
+        try {
+            const rds = new RDSService();
+            let rds_success = await rds.createUser(username);
+            if(!rds_success){
+                return res.status(500).json({message: 'Error with RDS servic.'}).end();
+            }
+        } catch (error) {
+            return res.status(400).json({message: 'Error with RDS service.',error: error.message}).end();
         }
         return res.status(200).json({message: 'Success'}).end();
     }

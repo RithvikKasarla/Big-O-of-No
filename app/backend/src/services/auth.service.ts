@@ -34,7 +34,7 @@ class CognitoService {
             return true;
         } catch (error) {
             console.log(error);
-            return false;
+            throw error;
         }
     }
     //Sign in a user
@@ -54,7 +54,7 @@ class CognitoService {
             return data;
         } catch (error) {
             console.log(error);
-            return error;
+            throw error;
         }
     }
     //Confirm a user
@@ -71,7 +71,7 @@ class CognitoService {
             return true;
         } catch (error) {
             console.log(error);
-            return false;
+            throw error;
         }
     }
 
