@@ -8,7 +8,14 @@ function JoinClassesPage() {
   const [classes, setClasses] = useState<{ id: number; name: string }[]>([]);
   const [selectedClasses, setSelectedClasses] = useState<number[]>([]);
   const { setHeaderData, headerData } = useContext(HeaderContext);
+  const [searchQuery, setSearchQuery] = useState("");
+  // const [filteredSet, setFilteredSet] = useState<
+  //   { id: number; name: string }[]
+  // >([]);
 
+  const filteredClasses = classes.filter((c) =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   useEffect(() => {
     fetch(`${config.apiUrl}/class/all`, {
       method: "POST",
@@ -36,34 +43,6 @@ function JoinClassesPage() {
       setSelectedClasses([...selectedClasses, classId]);
     }
   }
-
-  // function handleJoinClasses(e) {
-  //   e.preventDefault();
-  //   // send an API call to join the selected classes
-  //   const promises = selectedClasses.map((classId) => {
-  //     console.log(localStorage.getItem("token"));
-  //     console.log(classId);
-  //     return fetch(`${config.apiUrl}/class/${classId}/join`, {
-  //       method: "PUT",
-  //       body: JSON.stringify({
-  //         token: localStorage.getItem("token"),
-  //       }),
-  //     })
-  //       .then((response) => {
-  //         return response.json();
-  //       })
-  //       .then((data) => setClasses(data))
-  //       .catch((error) => console.log(error));
-  //   });
-
-  //   Promise.all(promises).then((results) => {
-  //     console.log(results);
-  //     console.log("RAISED");
-  //     // Set the classes-updated flag in localStorage to trigger an update of the class list
-  //     localStorage.setItem("classes-updated", "true");
-  //     setHeaderData((headerData) => !headerData);
-  //   });
-  // }
 
   function handleJoinClasses(e: any) {
     e.preventDefault();
@@ -107,13 +86,24 @@ function JoinClassesPage() {
         setHeaderData((headerData) => !headerData);
       });
   }
-
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-8">Classes</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Search classes..."
+          className="border border-gray-300 rounded-md py-2 px-4 block w-full appearance-none leading-normal"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       {classes && Array.isArray(classes) && (
-        <ul className="max-w-md w-full space-y-4">
-          {classes.map((c) => (
+        <ul
+          className="max-w-md w-full space-y-4"
+          style={{ overflowY: "scroll", width: "500px" }}
+        >
+          {filteredClasses.map((c) => (
             <li key={c.id} className="bg-white rounded-md p-4 shadow-md">
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
@@ -139,17 +129,3 @@ function JoinClassesPage() {
 }
 
 export default JoinClassesPage;
-
-// Promise.all(promises)
-//   .then((responses) => {
-//     console.log(responses);
-//     if (responses.every((r) => r.ok)) {
-//       alert("You have joined the selected classes!");
-//     } else {
-//       alert("Failed to join some classes.");
-//     }
-//   })
-//   .catch((error) => {
-//     console.error("Failed to join the classes:", error);
-//     alert("Failed to join some classes.");
-//   });
