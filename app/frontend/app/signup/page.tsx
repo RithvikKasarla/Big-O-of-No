@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import config from "../../config";
 import cookie from "cookie";
 import { FONT_MANIFEST } from "next/dist/shared/lib/constants";
+import { ServerResponse } from "http";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -15,6 +16,7 @@ const LoginPage = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [verifyError, setVerifyError] = useState("");
   useEffect(() => {
     // Set isMounted to true after the component has been mounted on the client
     setIsMounted(true);
@@ -103,20 +105,24 @@ const LoginPage = () => {
           console.log("Success:");
           console.log(data);
           if (data.message != "Success") {
+            console.log("ERROR");
             let errorMsg = "Signup request failed";
-
-            const firstError = data.errors[0];
-            console.log("forst", firstError);
-            if (firstError.param === "email") {
-              errorMsg = "Invalid email address";
-            } else if (firstError.param === "username") {
-              errorMsg = "Invalid username";
-            } else if (firstError.param === "password") {
-              errorMsg = "Invalid password";
+            if (data.message === "Error with Cognito service.") {
+              console.log("COGNITO");
+              errorMsg = data.error;
             } else {
-              errorMsg = "Signup request failed";
+              const firstError = data.errors[0];
+              console.log("forst", firstError);
+              if (firstError.param === "email") {
+                errorMsg = "Invalid email address";
+              } else if (firstError.param === "username") {
+                errorMsg = "Invalid username";
+              } else if (firstError.param === "password") {
+                errorMsg = "Invalid password";
+              } else {
+                errorMsg = "Signup request failed";
+              }
             }
-
             setError(errorMsg);
           } else {
             setShowVerification(true);
@@ -139,8 +145,12 @@ const LoginPage = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:");
-          setShowVerification(false);
-          setIsLogin(true);
+          if (data.errors) {
+            setVerifyError("Incorrect Code");
+          } else {
+            setShowVerification(false);
+            setIsLogin(true);
+          }
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -178,6 +188,7 @@ const LoginPage = () => {
                 placeholder="Enter Verification Code"
                 required
               />
+              <p className="text-red-500">{verifyError}</p>
             </div>
           )}
           {!isLogin && !showVerification && (

@@ -32,7 +32,11 @@ const Page = () => {
 
   useEffect(() => {
     if (localStorage.getItem("token") != null) {
-      fetchClasses();
+      try {
+        fetchClasses();
+      } catch (err) {
+        console.log(err);
+      }
     }
   }, [headerData]);
 
