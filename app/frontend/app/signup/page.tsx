@@ -145,7 +145,8 @@ const LoginPage = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:");
-          if (data.errors) {
+          console.log(JSON.stringify(data));
+          if (data.errors || data['error']) {
             setVerifyError("Incorrect Code");
           } else {
             setShowVerification(false);
