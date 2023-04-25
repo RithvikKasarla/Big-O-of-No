@@ -51,8 +51,12 @@ class UserController {
             ...(userId) ? {userId: parseInt(userId.toString())} : {},
             ...(username) ? {username: username.toString()} : {}
         }
-        const users = await (new UserService()).getUsers(getUsersParams);
-        response.status(200).send(users);
+        try {
+            const users = await (new UserService()).getUsers(getUsersParams);
+            return response.status(200).send(users);
+        } catch (error) {
+            return response.status(500).send(error.message);
+        }
         //response.status(501).send("getUsers not implemented yet.")
     }
 
@@ -73,8 +77,12 @@ class UserController {
             ...(username) ? {username: username.toString()} : {},
             ...(token) ? {token: token.toString()} : {}
         };
-        const users = await (new UserService()).getUsers(getUsersParams);
-        return response.status(200).send(users);
+        try {
+            const users = await (new UserService()).getUsers(getUsersParams);
+            return response.status(200).send(users);
+        } catch (error) {
+            return response.status(500).send(error.message);
+        }
     }
 
     private async validateBody(type: string){

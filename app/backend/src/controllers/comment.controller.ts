@@ -129,15 +129,20 @@ class CommentController {
         const {commentId } = request.params;
         const { token } = request.body;
         //Get userid from User Service.
-        const userService = new UserService();
-        const user:User = await userService.getUser({token: token});
-        //Get comment from Comment Service.
-        const commentService = new CommentService();
-        const comment: Comment = await commentService.getComment({commentId: parseInt(commentId.toString())});
-        //Check if user is comment owner.
-        if (user.id !== comment.authorId) {
-            return response.status(401).send("Unauthorized");
+        try {
+            const userService = new UserService();
+            const user:User = await userService.getUser({token: token});
+            const commentService = new CommentService();
+            const comment: Comment = await commentService.getComment({commentId: parseInt(commentId.toString())});
+            //Check if user is comment owner.
+            if (user.id !== comment.authorId) {
+                return response.status(401).send("Unauthorized");
+            }
+        } catch (error) {
+            return response.status(500).send(error.message);
         }
+        //Get comment from Comment Service.
+        
         //Delete comment.
         try {
             const commentService = new CommentService();
