@@ -64,16 +64,19 @@ class AuthController {
             return res.status(422).json({message:"Failed, likely invalid input.",errors: result.array()})
         }
         const {username, password} = req.body;
-        const cognito = new CognitoService();
+        try {
+            const cognito = new CognitoService();
         let cog_response = ( cognito.signIn(username, password)).then((data) => {
             if(data['statusCode']){
                 return res.status(data['statusCode']).json({message: data['message']}).end();
             }
             return res.status(200).json(data).end();
-        }).catch((err) => {
-            console.log("COG ERROR: " + JSON.stringify(err))
-            return res.status(400).json({message: 'Unhandled error.', error: err.message}).end();
         });
+        } catch (error) {
+            console.log("COG ERROR: " + JSON.stringify(error))
+            return res.status(400).json({message: 'Unhandled error.', error: error.message}).end();
+        }
+        
     }
     
     //Verify user based on email code, and create user in RDS.
@@ -85,10 +88,14 @@ class AuthController {
             return res.status(422).json({errors: result.array()})
         }
         const {username, code} = req.body;
-        const cognito = new CognitoService();
-        let cognito_succes = await cognito.verify(username, code)
-        if(!cognito_succes){
-            return res.status(500).json({message: 'Error with Cognito service.'}).end();
+        try {
+            const cognito = new CognitoService();
+            let cognito_success = await cognito.verify(username, code)
+            if(!cognito_success){
+                return res.status(500).json({message: 'Error with Cognito service.'}).end();
+            }
+        } catch (error) {
+            return res.status(400).json({message: 'Error with Cognito service.',error: error.message}).end();   
         }
         try {
             const rds = new RDSService();
@@ -109,7 +116,7 @@ class AuthController {
                 return [
                     body('username').notEmpty().isLength({min: 3, max: 20}),
                     body('email').notEmpty().normalizeEmail().isEmail(),
-                    body('password').isString().notEmpty().isLength({min: 6, max: 20}),
+                    body('password').isString().notEmpty().isLength({min: 6, max: 20}).matches(/\d/),
                     body('birthday').exists().notEmpty().isDate().isISO8601(),
                     body('name').notEmpty().isString(),
                     body('family_name').notEmpty().isString(),
