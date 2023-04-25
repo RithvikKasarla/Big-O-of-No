@@ -31,57 +31,64 @@ class UserController {
     //Given the query parameters, return a list of users.
     //Should eventually support regex.
     public async getUsers(request: Request, response: Response) {
-        const result = validationResult(request);
-        console.log(request.body)
-        //check queries.
-        if(!result.isEmpty()){
-            return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
-        }
-        const {classId, userId, username} = request.query;
-        if(!classId && !userId && !username){
-            return response.status(422).json({message: "Failed, at least one query parameter must be specified. Check if you mispelled the queries (case sensitive).",errors: result.array()})
-        }
-
-        //If querying by classId, make sure the user is a member of the class.
-        console.warn("ClassID-scope checking not implemented yet.");
-        //if(not in classId){return 401}
-
-        let getUsersParams = await {
-            ...(classId) ? {classId: parseInt(classId.toString())} : {},
-            ...(userId) ? {userId: parseInt(userId.toString())} : {},
-            ...(username) ? {username: username.toString()} : {}
-        }
         try {
-            const users = await (new UserService()).getUsers(getUsersParams);
-            return response.status(200).send(users);
+            const result = validationResult(request);
+            console.log(request.body)
+            //check queries.
+            if(!result.isEmpty()){
+                return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
+            }
+            const {classId, userId, username} = request.query;
+            if(!classId && !userId && !username){
+                return response.status(422).json({message: "Failed, at least one query parameter must be specified. Check if you mispelled the queries (case sensitive).",errors: result.array()})
+            }
+    
+            //If querying by classId, make sure the user is a member of the class.
+            console.warn("ClassID-scope checking not implemented yet.");
+            //if(not in classId){return 401}
+    
+            let getUsersParams = await {
+                ...(classId) ? {classId: parseInt(classId.toString())} : {},
+                ...(userId) ? {userId: parseInt(userId.toString())} : {},
+                ...(username) ? {username: username.toString()} : {}
+            }
+            try {
+                const users = await (new UserService()).getUsers(getUsersParams);
+                return response.status(200).send(users);
+            } catch (error) {
+                return response.status(500).send(error.message);
+            }
         } catch (error) {
-            return response.status(500).send(error.message);
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
         //response.status(501).send("getUsers not implemented yet.")
     }
 
     //Return a list of all users.
     public async getUsersForced(request: Request, response: Response) {
-
-        const result = validationResult(request);
-        console.log(request.body)
-        //check queries.
-        if(!result.isEmpty()){
-            return response.status(401).json({message: "Unauthorized,",errors: result.array()})
-        }
-        const {classId, userId, username} = request.query;
-        const { token } = request.body;
-        let getUsersParams = await {
-            ...(classId) ? {classId: parseInt(classId.toString())} : {},
-            ...(userId) ? {userId: parseInt(userId.toString())} : {},
-            ...(username) ? {username: username.toString()} : {},
-            ...(token) ? {token: token.toString()} : {}
-        };
         try {
-            const users = await (new UserService()).getUsers(getUsersParams);
-            return response.status(200).send(users);
+            const result = validationResult(request);
+            console.log(request.body)
+            //check queries.
+            if(!result.isEmpty()){
+                return response.status(401).json({message: "Unauthorized,",errors: result.array()})
+            }
+            const {classId, userId, username} = request.query;
+            const { token } = request.body;
+            let getUsersParams = await {
+                ...(classId) ? {classId: parseInt(classId.toString())} : {},
+                ...(userId) ? {userId: parseInt(userId.toString())} : {},
+                ...(username) ? {username: username.toString()} : {},
+                ...(token) ? {token: token.toString()} : {}
+            };
+            try {
+                const users = await (new UserService()).getUsers(getUsersParams);
+                return response.status(200).send(users);
+            } catch (error) {
+                return response.status(500).send(error.message);
+            }
         } catch (error) {
-            return response.status(500).send(error.message);
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
 

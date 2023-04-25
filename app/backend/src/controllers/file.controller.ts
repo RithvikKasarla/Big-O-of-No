@@ -74,162 +74,188 @@ class CDNController{
     
     //returns a list of files that match the query parameters.
     getFiles = async (request: Request, response: Response) => {
-        //Determine the queries.
-        const {classId} = request.params;
-        //Determine the user's class scope.
-        //const {token} = request.body;
-        //const userService = new UserService();
-        //const user:User = await userService.getUser({ token: token.toString() });
-        //Build params from queries.
-        const fileSearchParams = {
-            classId: parseInt(classId),
-            ...(request.query.userId) ? {userId: parseInt(request.query.userId.toString())} : {},
-            ...(request.query.username) ? {username: request.query.username.toString()} : {},
-            ...(request.query.fileId) ? {fileId: parseInt(request.query.fileId.toString())} : {},
-        }
-        //Get the files.
-        const fileService = new FileService();
         try {
-            const files:File[] = await fileService.getFiles(fileSearchParams);
-            return response.status(200).send({ message: "Successfully retrieved files.", files: files });
+            //Determine the queries.
+            const {classId} = request.params;
+            //Determine the user's class scope.
+            //const {token} = request.body;
+            //const userService = new UserService();
+            //const user:User = await userService.getUser({ token: token.toString() });
+            //Build params from queries.
+            const fileSearchParams = {
+                classId: parseInt(classId),
+                ...(request.query.userId) ? {userId: parseInt(request.query.userId.toString())} : {},
+                ...(request.query.username) ? {username: request.query.username.toString()} : {},
+                ...(request.query.fileId) ? {fileId: parseInt(request.query.fileId.toString())} : {},
+            }
+            //Get the files.
+            const fileService = new FileService();
+            try {
+                const files:File[] = await fileService.getFiles(fileSearchParams);
+                return response.status(200).send({ message: "Successfully retrieved files.", files: files });
+            } catch (error) {
+                return response.status(500).send({ message: "File Service error.", error: error });
+            }
         } catch (error) {
-            return response.status(500).send({ message: "File Service error.", error: error });
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
     //Gets all files.
     getFilesForced = async (request: Request, response: Response) => {
-        const fileSearchParams = {
-            ...(request.query.classId) ? {classId: parseInt(request.query.classId.toString())} : {},
-            ...(request.query.userId) ? {userId: parseInt(request.query.userId.toString())} : {},
-            ...(request.query.username) ? {username: request.query.username.toString()} : {},
-            ...(request.query.fileId) ? {fileId: parseInt(request.query.fileId.toString())} : {},
-            ...(request.query.title) ? {title: request.query.title.toString()} : {},
-        }
-
-        const fileService = new FileService();
         try {
-            const files:File[] = await fileService.getFiles(fileSearchParams);
-            return response.status(200).send({ message: "Successfully retrieved files.", files: files });
+            const fileSearchParams = {
+                ...(request.query.classId) ? {classId: parseInt(request.query.classId.toString())} : {},
+                ...(request.query.userId) ? {userId: parseInt(request.query.userId.toString())} : {},
+                ...(request.query.username) ? {username: request.query.username.toString()} : {},
+                ...(request.query.fileId) ? {fileId: parseInt(request.query.fileId.toString())} : {},
+                ...(request.query.title) ? {title: request.query.title.toString()} : {},
+            }
+    
+            const fileService = new FileService();
+            try {
+                const files:File[] = await fileService.getFiles(fileSearchParams);
+                return response.status(200).send({ message: "Successfully retrieved files.", files: files });
+            } catch (error) {
+                return response.status(500).send({ message: "File Service error.", error: error });
+            }
         } catch (error) {
-            return response.status(500).send({ message: "File Service error.", error: error });
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
     
     //Deletes a file.
     deleteFile = async (request: Request, response: Response) => {
-
-        const {fileId} = request.params;
-        const {token} = request.body;
         try {
-            //if user.id == file.authorId
-            const fileService = new FileService();
-            const userService = new UserService();
-            const user:User = await userService.getUser({ token: token.toString() });
-            const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
-            const file:File = files[0];
-            console.log(`File: ${JSON.stringify(file)}`)
-            if(user.id != file.authorId){
-                return response.status(401).send({ message: "Unauthorized.", error: "User does not own file." });
+            const {fileId} = request.params;
+            const {token} = request.body;
+            try {
+                //if user.id == file.authorId
+                const fileService = new FileService();
+                const userService = new UserService();
+                const user:User = await userService.getUser({ token: token.toString() });
+                const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
+                const file:File = files[0];
+                console.log(`File: ${JSON.stringify(file)}`)
+                if(user.id != file.authorId){
+                    return response.status(401).send({ message: "Unauthorized.", error: "User does not own file." });
+                }
+                let deletedFile:File = await fileService.deleteFile({fileId: file.id});
+    
+                return response.status(200).send({ message: "Successfully deleted file.", file: deletedFile });
+            } catch (error) {
+                return response.status(500).send({ message: "File Service error.", error: error.message });
             }
-            let deletedFile:File = await fileService.deleteFile({fileId: file.id});
-
-            return response.status(200).send({ message: "Successfully deleted file.", file: deletedFile });
         } catch (error) {
-            return response.status(500).send({ message: "File Service error.", error: error.message });
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
     
     //Deletes a file.
     deleteFileForced = async(request: Request, response: Response) => {
-        const {fileId} = request.params;
-        const {token} = request.body;
         try {
-            
-            const fileService = new FileService();
-            //const userService = new UserService();
-            //const user:User = await userService.getUser({ token: token.toString() });
-            const file:File = (await fileService.getFiles({fileId: parseInt(fileId)}))[0];
-            let deletedFile:File = await fileService.deleteFile({fileId: file.id});
-
-            return response.status(200).send({ message: "Successfully deleted file.", file: deletedFile });
+            const {fileId} = request.params;
+            const {token} = request.body;
+            try {
+                
+                const fileService = new FileService();
+                //const userService = new UserService();
+                //const user:User = await userService.getUser({ token: token.toString() });
+                const file:File = (await fileService.getFiles({fileId: parseInt(fileId)}))[0];
+                let deletedFile:File = await fileService.deleteFile({fileId: file.id});
+    
+                return response.status(200).send({ message: "Successfully deleted file.", file: deletedFile });
+            } catch (error) {
+                return response.status(500).send({ message: "File Service error.", error: error });
+            }
         } catch (error) {
-            return response.status(500).send({ message: "File Service error.", error: error });
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
     
     createFile = async (request: Request, response: Response) => {
-        
-        const file = request.files.file;
-        if(!file){
-            return response.status(400).send("No file was uploaded.");
-        }
-        let filename = file['name'];
-        //Replace spaces with underscores.
-        filename = filename.replace(/ /g, "_");
-        const {token} = request.body;
-        const title:string = request.body.title;
-        const {classId} = request.params;
         try {
-            const userService = new UserService();
-            const user:User = await userService.getUser({ token: token.toString() });
-            console.log("user: ", user.username);
-            
-            const localFileService = new LocalFileService();
-            const localFilePath:string = localFileService.downloadFile(user.username, file, filename);
-            
-            const s3Service = new S3Service();
-            const savedS3Url:string = await s3Service.uploadFile(user.username, localFilePath, filename);
-            console.log("s3_url: ", savedS3Url);
-            
-            const fileService = new FileService();
-            const rdsFile:File = await fileService.createFile({ title: title, s3_url: savedS3Url, classId: parseInt(classId), authorId: user.id });
-            console.log("file: ", rdsFile.title);
-            
-            const fileId = rdsFile.id;
-            if (!fileId) {
-                return response.status(500).send({ message: "File Service error.", error: "File ID not returned." });
+            const file = request.files.file;
+            if(!file){
+                return response.status(400).send("No file was uploaded.");
             }
-            
-            return response.status(200).send({ message: "Successfully uploaded file EFR", params: { classId: classId, fileId: fileId, s3_url: savedS3Url, title: title } });
-        } catch (err) {
-            // Catch and handle errors
-            console.log(err);
-            return response.status(500).json({ message: "Error occurred.", error: err.message });
+            let filename = file['name'];
+            //Replace spaces with underscores.
+            filename = filename.replace(/ /g, "_");
+            const {token} = request.body;
+            const title:string = request.body.title;
+            const {classId} = request.params;
+            try {
+                const userService = new UserService();
+                const user:User = await userService.getUser({ token: token.toString() });
+                console.log("user: ", user.username);
+                
+                const localFileService = new LocalFileService();
+                const localFilePath:string = localFileService.downloadFile(user.username, file, filename);
+                
+                const s3Service = new S3Service();
+                const savedS3Url:string = await s3Service.uploadFile(user.username, localFilePath, filename);
+                console.log("s3_url: ", savedS3Url);
+                
+                const fileService = new FileService();
+                const rdsFile:File = await fileService.createFile({ title: title, s3_url: savedS3Url, classId: parseInt(classId), authorId: user.id });
+                console.log("file: ", rdsFile.title);
+                
+                const fileId = rdsFile.id;
+                if (!fileId) {
+                    return response.status(500).send({ message: "File Service error.", error: "File ID not returned." });
+                }
+                
+                return response.status(200).send({ message: "Successfully uploaded file EFR", params: { classId: classId, fileId: fileId, s3_url: savedS3Url, title: title } });
+            } catch (err) {
+                // Catch and handle errors
+                console.log(err);
+                return response.status(500).json({ message: "Error occurred.", error: err.message });
+            }
+        } catch (error) {
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
 
     likeFile = async (request: Request, response: Response) => {
-        const {fileId} = request.params;
-        const {token} = request.body;
-        
         try {
-            const fileService = new FileService();
-            const userService = new UserService();
-            const user:User = await userService.getUser({ token: token.toString() });
-            const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
-            const file:File = files[0];
-            let likedFile:File = await fileService.likeFile({fileId: file.id, userId: user.id});
-
-            return response.status(200).send({ message: "Successfully liked file.", file: likedFile });
+            const {fileId} = request.params;
+            const {token} = request.body;
+            
+            try {
+                const fileService = new FileService();
+                const userService = new UserService();
+                const user:User = await userService.getUser({ token: token.toString() });
+                const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
+                const file:File = files[0];
+                let likedFile:File = await fileService.likeFile({fileId: file.id, userId: user.id});
+    
+                return response.status(200).send({ message: "Successfully liked file.", file: likedFile });
+            } catch (error) {
+                return response.status(500).send({ message: "File Service error.", error: error });
+            }
         } catch (error) {
-            return response.status(500).send({ message: "File Service error.", error: error });
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
     dislikeFile = async (request: Request, response: Response) => {
-        const {fileId} = request.params;
-        const {token} = request.body;
-        
         try {
-            const fileService = new FileService();
-            const userService = new UserService();
-            const user:User = await userService.getUser({ token: token.toString() });
-            const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
-            const file:File = files[0];
-            let dislikedFile:File = await fileService.dislikeFile({fileId: file.id, userId: user.id});
-
-            return response.status(200).send({ message: "Successfully disliked file.", file: dislikedFile });
+            const {fileId} = request.params;
+            const {token} = request.body;
+            
+            try {
+                const fileService = new FileService();
+                const userService = new UserService();
+                const user:User = await userService.getUser({ token: token.toString() });
+                const files:File[] = await fileService.getFiles({fileId: parseInt(fileId)});
+                const file:File = files[0];
+                let dislikedFile:File = await fileService.dislikeFile({fileId: file.id, userId: user.id});
+    
+                return response.status(200).send({ message: "Successfully disliked file.", file: dislikedFile });
+            } catch (error) {
+                return response.status(500).send({ message: "File Service error.", error: error });
+            }
         } catch (error) {
-            return response.status(500).send({ message: "File Service error.", error: error });
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
 

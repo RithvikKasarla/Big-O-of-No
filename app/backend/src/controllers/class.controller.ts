@@ -39,153 +39,172 @@ class ClassController {
     //Gets a list of classes. Defaults to all the classes that the user has access to.
     //Supported Query Parameters: ?classId
     getClasses = async (request: Request, response: Response) => {
-        const result = validationResult(request);
-        console.log(request.body)
-        //check queries.
-        if(!result.isEmpty()){
-            return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
-        }
-        
-        const {token} = request.body;        
-        //getClasses is scoped, must always include username.
-        const username = await (new CognitoService()).getUsername(token);
-        //construsct the request params.
-        let classServiceRequestParams = {
-            ...(request.query.classId ? {classId: parseInt(request.query.classId.toString())} : {}),
-            ...(username ? {username: username.toString()} : {})
-        };
-        
         try {
-            const classes = await (new ClassService()).getClasses(classServiceRequestParams);
-            return response.status(200).send(classes);
+            const result = validationResult(request);
+            console.log(request.body)
+            //check queries.
+            if(!result.isEmpty()){
+                return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
+            }
+            
+            const {token} = request.body;        
+            //getClasses is scoped, must always include username.
+            const username = await (new CognitoService()).getUsername(token);
+            //construsct the request params.
+            let classServiceRequestParams = {
+                ...(request.query.classId ? {classId: parseInt(request.query.classId.toString())} : {}),
+                ...(username ? {username: username.toString()} : {})
+            };
+            
+            try {
+                const classes = await (new ClassService()).getClasses(classServiceRequestParams);
+                return response.status(200).send(classes);
+            } catch (error) {
+                return response.status(500).json({message: error.message});
+            }
         } catch (error) {
-            return response.status(500).json({message: error.message});
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
     //Get ALL classes.
     //Admin only.
     //Supported Query Parameters: ?classId, ?userId, ?username, 
     getClassesForced = async (request: Request, response: Response) => {
-        const result = validationResult(request);
-        console.log(request.body)
-        //check queries.
-        if(!result.isEmpty()){
-            return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
-        }
-        //construsct the request params.
-        let classServiceRequestParams = {
-            ...(request.query.classId ? {classId: parseInt(request.query.classId.toString())} : {}),
-            ...(request.query.userId ? {userId: parseInt(request.query.userId.toString())} : {}),
-            ...(request.query.username ? {username: request.query.username.toString()} : {})
-        };
-        
         try {
-            const classes = await (new ClassService()).getClasses(classServiceRequestParams);
-            return response.status(200).send(classes);
+            const result = validationResult(request);
+            console.log(request.body)
+            //check queries.
+            if(!result.isEmpty()){
+                return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
+            }
+            //construsct the request params.
+            let classServiceRequestParams = {
+                ...(request.query.classId ? {classId: parseInt(request.query.classId.toString())} : {}),
+                ...(request.query.userId ? {userId: parseInt(request.query.userId.toString())} : {}),
+                ...(request.query.username ? {username: request.query.username.toString()} : {})
+            };
+            
+            try {
+                const classes = await (new ClassService()).getClasses(classServiceRequestParams);
+                return response.status(200).send(classes);
+            } catch (error) {
+                return response.status(500).json({message: error.message});
+            }
         } catch (error) {
-            return response.status(500).json({message: error.message});
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
-        
     }
 
     //join a class.
     //Token is required.
     //Adds the user to the class
     joinClass = async (request: Request, response: Response) => {
-        const result = validationResult(request);
-        console.log(request.body)
-        //check queries.
-        if(!result.isEmpty()){
-            return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
-        }
-        const {token} = request.body;        
-        //getClasses is scoped, must always include username.
-        let userId:number;
         try {
-            const user = await (new UserService()).getUser({token: token.toString()});
-            userId = user.id;
-            console.log("USERID: " + userId);
-        } catch (error) {
-            console.log(error.message)
-            return response.status(401).json({message: error.message});
-        }
-        //construsct the request params.
-        let classServiceRequestParams = {
-            classId: parseInt(request.params.classId.toString()),
-            userId: userId
-        };
-        try {
-            await (new ClassService()).joinClass(classServiceRequestParams);
-            return response.status(200).send({'message': 'Success'});
-        } catch (error) {
-            if(error.message === 'Class does not exist.') {
-                return response.status(404).json({message: "Class does not exist."});
-            }else{
-                return response.status(500).json({message: error.message});
+            const result = validationResult(request);
+            console.log(request.body)
+            //check queries.
+            if(!result.isEmpty()){
+                return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
             }
+            const {token} = request.body;        
+            //getClasses is scoped, must always include username.
+            let userId:number;
+            try {
+                const user = await (new UserService()).getUser({token: token.toString()});
+                userId = user.id;
+                console.log("USERID: " + userId);
+            } catch (error) {
+                console.log(error.message)
+                return response.status(401).json({message: error.message});
+            }
+            //construsct the request params.
+            let classServiceRequestParams = {
+                classId: parseInt(request.params.classId.toString()),
+                userId: userId
+            };
+            try {
+                await (new ClassService()).joinClass(classServiceRequestParams);
+                return response.status(200).send({'message': 'Success'});
+            } catch (error) {
+                if(error.message === 'Class does not exist.') {
+                    return response.status(404).json({message: "Class does not exist."});
+                }else{
+                    return response.status(500).json({message: error.message});
+                }
+            }
+        } catch (error) {
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
     
     //leave a class.
     //Token is required.
     leaveClass = async (request: Request, response: Response) => {
-        const result = validationResult(request);
-        console.log(request.body)
-        //check queries.
-        if(!result.isEmpty()){
-            return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
-        }
-        const {token} = request.body;        
-        //getClasses is scoped, must always include username.
-        let userId:number;
         try {
-            const user = await (new UserService()).getUser({token: token.toString()});
-            userId = user.id;
-            console.log("USERID: " + userId);
-        } catch (error) {
-            console.log(error.message)
-            return response.status(401).json({message: error.message});
-        }
-        //construsct the request params.
-        let classServiceRequestParams = {
-            classId: parseInt(request.params.classId.toString()),
-            userId: userId
-        };
+            const result = validationResult(request);
+            console.log(request.body)
+            //check queries.
+            if(!result.isEmpty()){
+                return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
+            }
+            const {token} = request.body;        
+            //getClasses is scoped, must always include username.
+            let userId:number;
+            try {
+                const user = await (new UserService()).getUser({token: token.toString()});
+                userId = user.id;
+                console.log("USERID: " + userId);
+            } catch (error) {
+                console.log(error.message)
+                return response.status(401).json({message: error.message});
+            }
+            //construsct the request params.
+            let classServiceRequestParams = {
+                classId: parseInt(request.params.classId.toString()),
+                userId: userId
+            };
 
-        try {
-            await (new ClassService()).leaveClass(classServiceRequestParams);
-            return response.status(200).send({'message': 'Success'});
+            try {
+                await (new ClassService()).leaveClass(classServiceRequestParams);
+                return response.status(200).send({'message': 'Success'});
+            } catch (error) {
+                return response.status(500).json({message: error.message});
+            }
         } catch (error) {
-            return response.status(500).json({message: error.message});
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
 
     //Create a new class.
     //Admin only.
     createClass = async (request: Request, response: Response) => {
-        const result = validationResult(request);
-        console.log(request.body)
-        //check queries.
-        if(!result.isEmpty()){
-            return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
-        }     
-        
-        //construct the request params.
-        let classServiceRequestParams = {
-            name: request.body.class_name.toString(),
-            ...(request.body.class_description ? {description: request.body.class_description.toString()} : {}),
-        };
         try {
-            const classes = await (new ClassService()).createClass(classServiceRequestParams);
-            return response.status(200).send(classes);
-        } catch (error) {
-            if(error.message === 'Class already exists.') {
-                return response.status(409).json({message: error.message});
-            }else if (error.message === 'A valid name is required.') {
-                return response.status(422).json({message: error.message});
-            }else{
-                return response.status(500).json({message: error.message});
+            const result = validationResult(request);
+            console.log(request.body)
+            //check queries.
+            if(!result.isEmpty()){
+                return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
+            }     
+            
+            //construct the request params.
+            let classServiceRequestParams = {
+                name: request.body.class_name.toString(),
+                ...(request.body.class_description ? {description: request.body.class_description.toString()} : {}),
+            };
+            try {
+                const classes = await (new ClassService()).createClass(classServiceRequestParams);
+                return response.status(200).send(classes);
+            } catch (error) {
+                if(error.message === 'Class already exists.') {
+                    return response.status(409).json({message: error.message});
+                }else if (error.message === 'A valid name is required.') {
+                    return response.status(422).json({message: error.message});
+                }else{
+                    return response.status(500).json({message: error.message});
+                }
             }
+        } catch (error) {
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
 
 
@@ -200,21 +219,25 @@ class ClassController {
     //delete a class.
     //Admin only.
     deleteClass = async (request: Request, response: Response) => {
-        const result = validationResult(request);
-        console.log(request.body)
-        //check queries.
-        if(!result.isEmpty()){
-            return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
-        }
-        let classServiceRequestParams = {
-            classId: parseInt(request.params.classId.toString()),
-        };
-
         try {
-            await (new ClassService()).deleteClass(classServiceRequestParams);
-            return response.status(200).send({'message': 'Success'});
+            const result = validationResult(request);
+            console.log(request.body)
+            //check queries.
+            if(!result.isEmpty()){
+                return response.status(422).json({message: "Failed, likely invalid input.",errors: result.array()})
+            }
+            let classServiceRequestParams = {
+                classId: parseInt(request.params.classId.toString()),
+            };
+    
+            try {
+                await (new ClassService()).deleteClass(classServiceRequestParams);
+                return response.status(200).send({'message': 'Success'});
+            } catch (error) {
+                return response.status(500).json({message: error.message});
+            }
         } catch (error) {
-            return response.status(500).json({message: error.message});
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
 

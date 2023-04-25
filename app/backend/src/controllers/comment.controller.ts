@@ -61,26 +61,30 @@ class CommentController {
     //Scoped to class.
     //Suported Query Parameters: ?userId, ?classId, ?commentId
     getComments = async (request: Request, response: Response) => {
-        const {fileId } = request.params;
-        const {userId, classId, commentId} = request.query;
-        const { token } = request.body;
-        //Get userid from User Service.
-        //const userService = new UserService();
-        //const user:User = await userService.getUser({token: token});
-        
-        let getCommentsParams = {
-            fileId: parseInt(fileId.toString()), //Required.
-            ...(userId) ? {userId: parseInt(userId.toString())} : {},
-            ...(classId) ? {classId: parseInt(classId.toString())}: {},
-            ...(commentId) ? {commentId: parseInt(commentId.toString())}: {},
-        }
-
         try {
-            const commentService = new CommentService();
-            const comments: Comment[] = await commentService.getComments(getCommentsParams);
-            return response.status(200).send(comments);
+            const {fileId } = request.params;
+            const {userId, classId, commentId} = request.query;
+            const { token } = request.body;
+            //Get userid from User Service.
+            //const userService = new UserService();
+            //const user:User = await userService.getUser({token: token});
+            
+            let getCommentsParams = {
+                fileId: parseInt(fileId.toString()), //Required.
+                ...(userId) ? {userId: parseInt(userId.toString())} : {},
+                ...(classId) ? {classId: parseInt(classId.toString())}: {},
+                ...(commentId) ? {commentId: parseInt(commentId.toString())}: {},
+            }
+    
+            try {
+                const commentService = new CommentService();
+                const comments: Comment[] = await commentService.getComments(getCommentsParams);
+                return response.status(200).send(comments);
+            } catch (error) {
+                return response.status(500).send(error.message);
+            }
         } catch (error) {
-            return response.status(500).send(error.message);
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
 
@@ -92,26 +96,30 @@ class CommentController {
     //Token is required.
     //Scoped to class.
     createComment = async (request: Request, response: Response) => {
-        //return response.status(501).send("Not Implemented");
-        const {fileId } = request.params;
-        const {content} = request.body;
-        const { token } = request.body;
-        //Get userid from User Service.
-        const userService = new UserService();
-        const user:User = await userService.getUser({token: token});
-        
-        let createCommentParams = {
-            fileId: parseInt(fileId.toString()), //Required.
-            content: content.toString(), //Required.
-            userId: user.id, //Required.
-        }
-
         try {
-            const commentService = new CommentService();
-            const comment: Comment = await commentService.createComment(createCommentParams);
-            return response.status(200).send(comment);
+            //return response.status(501).send("Not Implemented");
+            const {fileId } = request.params;
+            const {content} = request.body;
+            const { token } = request.body;
+            //Get userid from User Service.
+            const userService = new UserService();
+            const user:User = await userService.getUser({token: token});
+            
+            let createCommentParams = {
+                fileId: parseInt(fileId.toString()), //Required.
+                content: content.toString(), //Required.
+                userId: user.id, //Required.
+            }
+    
+            try {
+                const commentService = new CommentService();
+                const comment: Comment = await commentService.createComment(createCommentParams);
+                return response.status(200).send(comment);
+            } catch (error) {
+                return response.status(500).send(error.message);
+            }
         } catch (error) {
-            return response.status(500).send(error.message);
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
     }
 
@@ -126,31 +134,35 @@ class CommentController {
     //Token is required.
     //Scoped to comment owner.
     deleteComment = async (request: Request, response: Response) => {
-        const {commentId } = request.params;
-        const { token } = request.body;
-        //Get userid from User Service.
         try {
-            const userService = new UserService();
-            const user:User = await userService.getUser({token: token});
-            const commentService = new CommentService();
-            const comment: Comment = await commentService.getComment({commentId: parseInt(commentId.toString())});
-            //Check if user is comment owner.
-            if (user.id !== comment.authorId) {
-                return response.status(401).send("Unauthorized");
+            const {commentId } = request.params;
+            const { token } = request.body;
+            //Get userid from User Service.
+            try {
+                const userService = new UserService();
+                const user:User = await userService.getUser({token: token});
+                const commentService = new CommentService();
+                const comment: Comment = await commentService.getComment({commentId: parseInt(commentId.toString())});
+                //Check if user is comment owner.
+                if (user.id !== comment.authorId) {
+                    return response.status(401).send("Unauthorized");
+                }
+            } catch (error) {
+                return response.status(500).send(error.message);
+            }
+            //Get comment from Comment Service.
+            
+            //Delete comment.
+            try {
+                const commentService = new CommentService();
+                const comment: Comment = await commentService.deleteComment({commentId: parseInt(commentId.toString())});
+                return response.status(200).send(comment);
+            }
+            catch (error) {
+                return response.status(500).send(error.message);
             }
         } catch (error) {
-            return response.status(500).send(error.message);
-        }
-        //Get comment from Comment Service.
-        
-        //Delete comment.
-        try {
-            const commentService = new CommentService();
-            const comment: Comment = await commentService.deleteComment({commentId: parseInt(commentId.toString())});
-            return response.status(200).send(comment);
-        }
-        catch (error) {
-            return response.status(500).send(error.message);
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
 
     }
@@ -158,17 +170,20 @@ class CommentController {
     //force delete a comment.
     //Admin only.
     forceDeleteComment = async (request: Request, response: Response) => {
-        const {commentId } = request.params;
-        //Delete comment.
         try {
-            const commentService = new CommentService();
-            const comment: Comment = await commentService.deleteComment({commentId: parseInt(commentId.toString())});
-            return response.status(200).send(comment);
+            const {commentId } = request.params;
+            //Delete comment.
+            try {
+                const commentService = new CommentService();
+                const comment: Comment = await commentService.deleteComment({commentId: parseInt(commentId.toString())});
+                return response.status(200).send(comment);
+            }
+            catch (error) {
+                return response.status(500).send(error.message);
+            }
+        } catch (error) {
+            return response.status(500).json({message: "Unhandeled error.", error: error.message});
         }
-        catch (error) {
-            return response.status(500).send(error.message);
-        }
-        return response.status(501).send("Not Implemented");
     }
 
     //Verify Body
