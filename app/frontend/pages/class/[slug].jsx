@@ -64,7 +64,8 @@ const ClassPageTemplate = ({ name, username, files }) => {
   }, [files]);
 
   const getListOfFiles = async () => {
-    const curLoc = typeof window !== "undefined" ? window.location.pathname : "";
+    const curLoc =
+      typeof window !== "undefined" ? window.location.pathname : "";
     const classIdMatch = curLoc.match(/\/(\d+)\/?$/);
     const classId = classIdMatch ? classIdMatch[1] : "";
 
@@ -127,6 +128,7 @@ const ClassPageTemplate = ({ name, username, files }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 p-5">
               {filteredFiles.map((file, index) => (
                 <FileCard
+                  key={file.id}
                   File={file}
                   Username={username}
                   ListOfFiles={getListOfFiles}
