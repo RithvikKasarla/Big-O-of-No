@@ -74,6 +74,7 @@ class CDNController{
     
     //returns a list of files that match the query parameters.
     getFiles = async (request: Request, response: Response) => {
+        console.log(`[getFiles] : ${JSON.stringify(request.query)}`)
         try {
             //Determine the queries.
             const {classId} = request.params;
@@ -102,6 +103,7 @@ class CDNController{
     }
     //Gets all files.
     getFilesForced = async (request: Request, response: Response) => {
+        console.log(`[getFilesForced] : ${JSON.stringify(request.query)}`)
         try {
             const fileSearchParams = {
                 ...(request.query.classId) ? {classId: parseInt(request.query.classId.toString())} : {},
@@ -125,6 +127,7 @@ class CDNController{
     
     //Deletes a file.
     deleteFile = async (request: Request, response: Response) => {
+        console.log(`[deleteFile] : ${JSON.stringify(request.query)}`)
         try {
             const {fileId} = request.params;
             const {token} = request.body;
@@ -152,6 +155,7 @@ class CDNController{
     
     //Deletes a file.
     deleteFileForced = async(request: Request, response: Response) => {
+        console.log(`[deleteFileForced] : ${JSON.stringify(request.query)}`)
         try {
             const {fileId} = request.params;
             const {token} = request.body;
@@ -173,6 +177,7 @@ class CDNController{
     }
     
     createFile = async (request: Request, response: Response) => {
+        console.log(`[createFile] : ${JSON.stringify(request.query)}`)
         try {
             const file = request.files.file;
             if(!file){
@@ -217,6 +222,7 @@ class CDNController{
     }
 
     likeFile = async (request: Request, response: Response) => {
+        console.log(`[likeFile] : ${JSON.stringify(request.query)}`)
         try {
             const {fileId} = request.params;
             const {token} = request.body;
@@ -238,6 +244,7 @@ class CDNController{
         }
     }
     dislikeFile = async (request: Request, response: Response) => {
+        console.log(`[dislikeFile] : ${JSON.stringify(request.query)}`)
         try {
             const {fileId} = request.params;
             const {token} = request.body;

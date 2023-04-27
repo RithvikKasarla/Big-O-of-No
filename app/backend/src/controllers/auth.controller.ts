@@ -27,6 +27,7 @@ class AuthController {
 
     //Create a new user.
     signUp = async (req: Request, res: Response)  => {
+        console.log(`[signUp] : ${JSON.stringify(req.query)}`)
         try {
             const result = validationResult(req);
             console.log(req.body)
@@ -61,6 +62,7 @@ class AuthController {
     
     //Sign in a user, returns access token.
     signIn = async (req: Request, res: Response) => {
+        console.log(`[signIn] : ${JSON.stringify(req.query)}`)
         try {
             const result = validationResult(req);
             console.log(req.body)
@@ -88,6 +90,7 @@ class AuthController {
     
     //Verify user based on email code, and create user in RDS.
     verify = async (req: Request, res: Response) => {
+        console.log(`[verify] : ${JSON.stringify(req.query)}`)
         try {
             //check if iit passes validation.
             const result = validationResult(req);

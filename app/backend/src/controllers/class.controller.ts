@@ -39,6 +39,7 @@ class ClassController {
     //Gets a list of classes. Defaults to all the classes that the user has access to.
     //Supported Query Parameters: ?classId
     getClasses = async (request: Request, response: Response) => {
+        console.log(`[getClasses] : ${JSON.stringify(request.query)}`)
         try {
             const result = validationResult(request);
             console.log(request.body)
@@ -70,6 +71,7 @@ class ClassController {
     //Admin only.
     //Supported Query Parameters: ?classId, ?userId, ?username, 
     getClassesForced = async (request: Request, response: Response) => {
+        console.log(`[getClassesForced] : ${JSON.stringify(request.query)}`)
         try {
             const result = validationResult(request);
             console.log(request.body)
@@ -99,6 +101,7 @@ class ClassController {
     //Token is required.
     //Adds the user to the class
     joinClass = async (request: Request, response: Response) => {
+        console.log(`[joinClass] : ${JSON.stringify(request.query)}`)
         try {
             const result = validationResult(request);
             console.log(request.body)
@@ -140,6 +143,7 @@ class ClassController {
     //leave a class.
     //Token is required.
     leaveClass = async (request: Request, response: Response) => {
+        console.log(`[leaveClass] : ${JSON.stringify(request.query)}`)
         try {
             const result = validationResult(request);
             console.log(request.body)
@@ -178,6 +182,7 @@ class ClassController {
     //Create a new class.
     //Admin only.
     createClass = async (request: Request, response: Response) => {
+        console.log(`[createClass] : ${JSON.stringify(request.query)}`)
         try {
             const result = validationResult(request);
             console.log(request.body)
@@ -219,6 +224,7 @@ class ClassController {
     //delete a class.
     //Admin only.
     deleteClass = async (request: Request, response: Response) => {
+        console.log(`[deleteClass] : ${JSON.stringify(request.query)}`)
         try {
             const result = validationResult(request);
             console.log(request.body)

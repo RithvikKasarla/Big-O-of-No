@@ -31,6 +31,7 @@ class UserController {
     //Given the query parameters, return a list of users.
     //Should eventually support regex.
     public async getUsers(request: Request, response: Response) {
+        console.log(`[getUsers] : ${JSON.stringify(request.query)}`)
         try {
             const result = validationResult(request);
             console.log(request.body)
@@ -66,6 +67,7 @@ class UserController {
 
     //Return a list of all users.
     public async getUsersForced(request: Request, response: Response) {
+        console.log(`[getUsersForced] : ${JSON.stringify(request.query)}`)
         try {
             const result = validationResult(request);
             console.log(request.body)

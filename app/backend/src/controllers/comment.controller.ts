@@ -61,6 +61,7 @@ class CommentController {
     //Scoped to class.
     //Suported Query Parameters: ?userId, ?classId, ?commentId
     getComments = async (request: Request, response: Response) => {
+        console.log(`[getComments] : ${JSON.stringify(request.query)}`)
         try {
             const {fileId } = request.params;
             const {userId, classId, commentId} = request.query;
@@ -96,6 +97,7 @@ class CommentController {
     //Token is required.
     //Scoped to class.
     createComment = async (request: Request, response: Response) => {
+        console.log(`[createComment] : ${JSON.stringify(request.query)}`)
         try {
             //return response.status(501).send("Not Implemented");
             const {fileId } = request.params;
@@ -134,6 +136,7 @@ class CommentController {
     //Token is required.
     //Scoped to comment owner.
     deleteComment = async (request: Request, response: Response) => {
+        console.log(`[deleteComment] : ${JSON.stringify(request.query)}`)
         try {
             const {commentId } = request.params;
             const { token } = request.body;
@@ -170,6 +173,7 @@ class CommentController {
     //force delete a comment.
     //Admin only.
     forceDeleteComment = async (request: Request, response: Response) => {
+        console.log(`[forceDeleteComment] : ${JSON.stringify(request.query)}`)
         try {
             const {commentId } = request.params;
             //Delete comment.
